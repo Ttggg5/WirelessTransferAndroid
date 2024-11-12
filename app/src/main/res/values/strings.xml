@@ -1,5 +1,15 @@
 <resources>
-    <string name="app_name">WirelessTransferAndroid</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="app_name" translatable="false">WirelessTransferAndroid</string>
+
+    <string name="device_name">裝置名稱:</string>
+    <string name="device_ip">裝置IP:</string>
+    <string name="wifi_name">Wifi名稱:</string>
+
+    <string name="home">首頁</string>
+    <string name="mirror">鏡像</string>
+    <string name="extend">延伸</string>
+    <string name="file_share">檔案傳輸</string>
+    <string name="setting">設定</string>
+<!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
