@@ -8,4 +8,6 @@
 
     <color name="main2">#FF4E4E4E</color>
     <color name="main2_pressed">#3C3C3C</color>
+
+    <color name="background">#FF313131</color>
 </resources>

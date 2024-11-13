@@ -11,16 +11,16 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_homeFragment_to_mirrorFragment"
-            app:destination="@id/mirrorFragment" />
+            android:id="@+id/action_homeFragment_to_screenShareFragment"
+            app:destination="@id/screenShareFragment" />
     </fragment>
     <fragment
-        android:id="@+id/mirrorFragment"
-        android:name="com.example.wirelesstransferandroid.fragments.MirrorFragment"
-        android:label="fragment_mirror"
-        tools:layout="@layout/fragment_mirror" >
+        android:id="@+id/screenShareFragment"
+        android:name="com.example.wirelesstransferandroid.fragments.ScreenShareFragment"
+        android:label="fragment_screen_share"
+        tools:layout="@layout/fragment_screen_share" >
         <action
-            android:id="@+id/action_mirrorFragment_to_homeFragment"
+            android:id="@+id/action_screenShareFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
 </navigation>

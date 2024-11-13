@@ -8,17 +8,6 @@
                     <solid android:color="@color/main2_pressed"/>
                 </shape>
             </item>
-
-            <item
-                android:height="30dp"
-                android:gravity="bottom">
-                <shape android:shape="rectangle">
-                    <corners
-                        android:bottomLeftRadius="10dp"
-                        android:bottomRightRadius="10dp"/>
-                    <solid android:color="@color/main"/>
-                </shape>
-            </item>
         </layer-list>
     </item>
 
@@ -28,17 +17,6 @@
                 <shape android:shape="rectangle">
                     <corners android:radius="10dp"/>
                     <solid android:color="@color/main2"/>
-                </shape>
-            </item>
-
-            <item
-                android:height="30dp"
-                android:gravity="bottom">
-                <shape android:shape="rectangle">
-                    <corners
-                        android:bottomLeftRadius="10dp"
-                        android:bottomRightRadius="10dp"/>
-                    <solid android:color="@color/main"/>
                 </shape>
             </item>
         </layer-list>

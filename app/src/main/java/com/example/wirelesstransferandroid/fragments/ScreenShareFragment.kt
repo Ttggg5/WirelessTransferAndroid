@@ -7,25 +7,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.wirelesstransferandroid.R
-import com.example.wirelesstransferandroid.databinding.FragmentHomeBinding
-import com.example.wirelesstransferandroid.databinding.FragmentMirrorBinding
+import com.example.wirelesstransferandroid.databinding.FragmentScreenShareBinding
 
-class MirrorFragment : Fragment() {
+class ScreenShareFragment : Fragment() {
 
-    private lateinit var binding: FragmentMirrorBinding
+    private lateinit var binding: FragmentScreenShareBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMirrorBinding.inflate(inflater, container, false)
+        binding = FragmentScreenShareBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.backBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_mirrorFragment_to_homeFragment)
+            findNavController().navigate(R.id.action_screenShareFragment_to_homeFragment)
         }
 
     }

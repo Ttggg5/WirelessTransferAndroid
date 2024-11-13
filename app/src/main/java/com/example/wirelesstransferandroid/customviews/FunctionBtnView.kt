@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.Dimension
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import com.example.wirelesstransferandroid.R
@@ -19,6 +20,8 @@ class FunctionBtnView: ConstraintLayout {
 
     var fun_icon: Drawable? = null
     var fun_name: String? = ""
+    var imgBtn_width: Int = resources.getDimensionPixelSize(R.dimen.default_btn_width)
+    var imgBtn_height: Int = resources.getDimensionPixelSize(R.dimen.default_btn_height)
 
     constructor(context: Context): super(context) {
         initView()
@@ -39,19 +42,23 @@ class FunctionBtnView: ConstraintLayout {
     private fun getValues(typedArray: TypedArray) {
         fun_icon = typedArray.getDrawable(R.styleable.FunctionBtnView_function_icon)
         fun_name = typedArray.getString(R.styleable.FunctionBtnView_function_name) ?: ""
+        imgBtn_width = typedArray.getDimensionPixelSize(R.styleable.FunctionBtnView_imgBtn_width, resources.getDimensionPixelSize(R.dimen.default_btn_width))
+        imgBtn_height = typedArray.getDimensionPixelSize(R.styleable.FunctionBtnView_imgBtn_height, resources.getDimensionPixelSize(R.dimen.default_btn_height))
         typedArray.recycle()
     }
 
     private fun initView() {
         inflate(context, R.layout.customview_fuctionbtnview, this)
 
-        var function_icon: ImageView = findViewById<ImageView>(R.id.function_icon)
+        var function_icon: ImageView = findViewById(R.id.function_icon)
         function_icon.setImageDrawable(fun_icon)
 
-        var function_name: TextView = findViewById<TextView>(R.id.function_name)
-        function_name.setText(fun_name)
+        var function_name: TextView = findViewById(R.id.function_name)
+        function_name.text = fun_name
+        function_name.width = imgBtn_width
 
-        var imgBtn: ImageButton = findViewById<ImageButton>(R.id.imgBtn)
+        var imgBtn: ImageButton = findViewById(R.id.imgBtn)
+        imgBtn.layoutParams = LayoutParams(imgBtn_width, imgBtn_height)
         imgBtn.setOnClickListener {
             onClick.invoke()
         }

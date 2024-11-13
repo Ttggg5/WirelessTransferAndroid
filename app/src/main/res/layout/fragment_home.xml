@@ -4,72 +4,144 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.HomeFragment">
+    tools:context=".fragments.HomeFragment"
+    android:background="@color/background">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <TextView
+
+        <!-- title bar -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/main"
-            android:text="@string/home"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            android:padding="10dp"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="10dp">
+            android:orientation="horizontal"
+            android:background="@color/main">
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/device_name"
-                android:textSize="20sp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/device_ip"
-                android:textSize="20sp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wifi_name"
-                android:textSize="20sp"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/home"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:padding="10dp"
+                android:gravity="center_vertical" />
         </LinearLayout>
 
-        <ScrollView
+        <!-- device info card -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:orientation="vertical"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:padding="10dp"
+            android:elevation="20dp"
+            android:background="@drawable/round_block">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/device_name"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:id="@+id/device_name_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="5dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/device_ip"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:id="@+id/device_ip_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="5dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/wifi_name"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:id="@+id/wifi_name_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="5dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- function buttons -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
             <TableLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:stretchColumns="0, 1">
-                <TableRow android:layout_marginTop="50dp">
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="60dp">
                     <com.example.wirelesstransferandroid.customviews.FunctionBtnView
-                        android:id="@+id/mirrorBtn"
+                        android:id="@+id/screenShareBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         app:function_icon="@drawable/mirror_icon"
-                        app:function_name="@string/mirror"/>
-
-                    <com.example.wirelesstransferandroid.customviews.FunctionBtnView
-                        android:id="@+id/extendBtn"
-                        app:function_icon="@drawable/extend_screen_icon"
-                        app:function_name="@string/extend"/>
+                        app:function_name="@string/screen_share"
+                        app:imgBtn_width="350dp"
+                        app:imgBtn_height="180dp"
+                        android:layout_span="2"
+                        android:layout_gravity="center_horizontal"/>
                 </TableRow>
 
-                <TableRow android:layout_marginTop="50dp">
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="60dp">
                     <com.example.wirelesstransferandroid.customviews.FunctionBtnView
                         android:id="@+id/fileShareBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         app:function_icon="@drawable/file_sharing_icon"
-                        app:function_name="@string/file_share"/>
+                        app:function_name="@string/file_share"
+                        android:layout_gravity="center_horizontal"/>
 
                     <com.example.wirelesstransferandroid.customviews.FunctionBtnView
                         android:id="@+id/settingBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         app:function_icon="@drawable/setting_icon"
-                        app:function_name="@string/setting"/>
+                        app:function_name="@string/setting"
+                        android:layout_gravity="center_horizontal"/>
                 </TableRow>
             </TableLayout>
         </ScrollView>

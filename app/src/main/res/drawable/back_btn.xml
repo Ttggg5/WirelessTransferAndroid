@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <bitmap android:src="@drawable/back_arrow_pressed"/>
+    </item>
+
+    <item android:state_enabled="true">
+        <bitmap android:src="@drawable/back_arrow"/>
+    </item>
+
+    <item android:state_enabled="false">
+        <bitmap android:src="@drawable/back_arrow_disable"/>
+    </item>
+</selector>

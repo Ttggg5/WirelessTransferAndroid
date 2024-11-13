@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="default_btn_width">150dp</dimen>
+    <dimen name="default_btn_height">150dp</dimen>
+
     <declare-styleable name="FunctionBtnView">
         <attr name="function_icon" format="reference" />
         <attr name="function_name" format="string" />
+        <attr name="imgBtn_width" format="dimension" />
+        <attr name="imgBtn_height" format="dimension" />
     </declare-styleable>
 </resources>
