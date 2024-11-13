@@ -41,7 +41,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // request location permission
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
         }
 
         // init device information
@@ -63,7 +63,7 @@ class HomeFragment : Fragment() {
             if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 binding.wifiNameTv.text = InternetInfo.getSSID(requireContext())
             } else {
-                Toast.makeText(context, "必須許可，才能使用此app", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "必須許可位置權限，才能使用此app", Toast.LENGTH_SHORT).show()
                 requireActivity().finish()
             }
         }
