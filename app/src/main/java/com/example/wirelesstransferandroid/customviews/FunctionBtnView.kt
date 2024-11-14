@@ -55,10 +55,11 @@ class FunctionBtnView: ConstraintLayout {
 
         var function_name: TextView = findViewById(R.id.function_name)
         function_name.text = fun_name
-        function_name.width = imgBtn_width
+        //function_name.width = imgBtn_width
 
         var imgBtn: ImageButton = findViewById(R.id.imgBtn)
-        imgBtn.layoutParams = LayoutParams(imgBtn_width, imgBtn_height)
+        imgBtn.contentDescription = fun_name
+        //imgBtn.layoutParams = LayoutParams(imgBtn_width, imgBtn_height)
         imgBtn.setOnClickListener {
             onClick.invoke()
         }

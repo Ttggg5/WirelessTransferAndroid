@@ -3,35 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.ScreenShareFragment"
     android:background="@color/background">
-    <LinearLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <LinearLayout
+        android:layout_height="match_parent">
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/main">
-            <ImageButton
-                android:id="@+id/backBtn"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:scaleType="centerInside"
-                android:background="@drawable/back_btn"
-                android:layout_margin="5dp" />
+            android:backgroundTint="@color/main">
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:title="@string/screen_share"
+                app:titleTextColor="@color/white"
+                app:navigationIcon="@drawable/baseline_navigate_before_24"/>
+            </com.google.android.material.appbar.AppBarLayout>
 
-            <TextView
+        <!-- Note: A RecyclerView can also be used -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/screen_share"
-                android:textSize="18sp"
-                android:textColor="@color/white"
-                android:padding="10dp"
-                android:gravity="center_vertical" />
-        </LinearLayout>
+                android:orientation="vertical">
 
-
-    </LinearLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </FrameLayout>

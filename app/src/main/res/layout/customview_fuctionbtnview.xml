@@ -1,44 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
     <ImageButton
         android:id="@+id/imgBtn"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/function_btn"
         android:minWidth="150dp"
         android:minHeight="150dp"
-        android:background="@drawable/function_btn"
-        android:elevation="21dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/function_icon"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:elevation="21dp"
         android:layout_marginBottom="30dp"
         app:layout_constraintBottom_toBottomOf="@id/imgBtn"
         app:layout_constraintLeft_toLeftOf="@+id/imgBtn"
         app:layout_constraintRight_toRightOf="@+id/imgBtn"
-        app:layout_constraintTop_toTopOf="@+id/imgBtn"/>
+        app:layout_constraintTop_toTopOf="@+id/imgBtn" />
 
     <TextView
         android:id="@+id/function_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="21dp"
-        android:textColor="@color/white"
         android:background="@drawable/half_round_block"
         android:padding="5dp"
         android:textAlignment="center"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/imgBtn"
         app:layout_constraintLeft_toLeftOf="@+id/imgBtn"
-        app:layout_constraintRight_toRightOf="@+id/imgBtn"/>
+        app:layout_constraintRight_toRightOf="@+id/imgBtn" />
 </merge>

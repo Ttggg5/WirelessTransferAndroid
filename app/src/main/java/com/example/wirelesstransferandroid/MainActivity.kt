@@ -18,20 +18,4 @@ class MainActivity : AppCompatActivity() {
             insets
         }
     }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-        deviceId: Int
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId)
-        var fragments: List<Fragment> = supportFragmentManager.fragments
-        if (fragments == null) return
-
-        for (fragment in fragments) {
-            if (fragment != null)
-                fragment.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        }
-    }
 }

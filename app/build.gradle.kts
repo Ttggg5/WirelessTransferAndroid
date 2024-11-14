@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.wirelesstransferandroid"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -40,7 +40,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -66,4 +65,9 @@ dependencies {
 
     // Testing Navigation
     androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
+}
+
+dependencies {
+    // QR code scanner
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }

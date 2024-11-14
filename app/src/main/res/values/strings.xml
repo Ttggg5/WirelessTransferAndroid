@@ -6,9 +6,19 @@
     <string name="wifi_name">Wifi名稱:</string>
 
     <string name="home">首頁</string>
-    <string name="mirror">鏡像</string>
-    <string name="extend">延伸</string>
     <string name="screen_share">螢幕分享</string>
     <string name="file_share">檔案傳輸</string>
     <string name="setting">設定</string>
+
+    <string name="mirror">鏡像</string>
+    <string name="extend">延伸</string>
+
+    <string name="qr_scanner_description">QR Code掃描器</string>
+    <string name="qr_scanner_prompt">請掃描PC端的QR Code</string>
+
+    <string name="confirm">確認</string>
+    <string name="cancel">取消</string>
+
+    <string name="permission_warring_dialog_title">需要權限</string>
+    <string name="location_permission_warring_message">必須許可位置權限，才能使用此app</string>
 </resources>
