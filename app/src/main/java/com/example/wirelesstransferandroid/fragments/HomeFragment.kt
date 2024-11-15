@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.databinding.FragmentHomeBinding
-import com.example.wirelesstransferandroid.toolmodules.InternetInfo
+import com.example.wirelesstransferandroid.tools.InternetInfo
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions

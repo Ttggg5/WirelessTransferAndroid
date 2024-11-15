@@ -1,4 +1,4 @@
-package com.example.wirelesstransferandroid.toolmodules
+package com.example.wirelesstransferandroid.tools
 
 import android.content.Context
 import android.net.wifi.WifiInfo
