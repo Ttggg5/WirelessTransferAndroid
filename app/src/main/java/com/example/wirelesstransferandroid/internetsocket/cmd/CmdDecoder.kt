@@ -179,7 +179,7 @@ class CmdDecoder {
                 CmdType.Keyboard -> {}
                 CmdType.Mouse -> {}
                 CmdType.Webcam -> {}
-                CmdType.Request -> {}
+                CmdType.Request -> cmd = RequestCmd(data)
                 CmdType.ScreenInfo -> {}
                 else -> return null
             }

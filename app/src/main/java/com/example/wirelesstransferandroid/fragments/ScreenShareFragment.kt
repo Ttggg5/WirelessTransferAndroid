@@ -1,6 +1,7 @@
 package com.example.wirelesstransferandroid.fragments
 
 import android.os.Bundle
+import android.provider.Settings
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,10 +9,19 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.databinding.FragmentScreenShareBinding
+import com.example.wirelesstransferandroid.internetsocket.MyTcp.Indexes
+import com.example.wirelesstransferandroid.internetsocket.MyUdp.MyUdp
+import com.example.wirelesstransferandroid.internetsocket.cmd.ClientInfoCmd
+import com.example.wirelesstransferandroid.internetsocket.cmd.CmdDecoder
+import com.example.wirelesstransferandroid.internetsocket.cmd.CmdType
+import com.example.wirelesstransferandroid.internetsocket.cmd.RequestCmd
+import com.example.wirelesstransferandroid.internetsocket.cmd.RequestType
+import com.example.wirelesstransferandroid.tools.InternetInfo
 
 class ScreenShareFragment : Fragment() {
 
     private lateinit var binding: FragmentScreenShareBinding
+    private lateinit var myUdpListener: MyUdp
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,5 +37,38 @@ class ScreenShareFragment : Fragment() {
             findNavController().navigate(R.id.action_screenShareFragment_to_homeFragment)
         }
 
+        myUdpListener = MyUdp(resources.getInteger(R.integer.udp_port))
+        Thread {
+            while (true) {
+                try {
+                    var recvBuffer = myUdpListener.receive()
+                    val indexes = Indexes()
+                    var cmd = CmdDecoder.DecodeCmd(recvBuffer, indexes, recvBuffer.size)
+                    if (cmd != null && cmd.cmdType == CmdType.Request) {
+                        val requestCmd = cmd as RequestCmd
+                        when (requestCmd.requestType) {
+                            RequestType.PhoneClientInfoShareScreen -> {
+                                myUdpListener.send(
+                                    ClientInfoCmd(
+                                        Settings.Global.getString(context?.contentResolver, "device_name"),
+                                        InternetInfo.getPhoneIp(requireContext())
+                                    ),
+                                    myUdpListener.getSenderIP()
+                                )
+                            }
+                            else -> {}
+                        }
+                    }
+                } catch (ex: Exception) {
+                    break
+                }
+            }
+            myUdpListener.close()
+        }.start()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        myUdpListener.close()
     }
 }

@@ -17,13 +17,13 @@ class ClientInfoCmd: Cmd {
     constructor(clientName: String, ip: String) {
         this.clientName = clientName;
         this.ip = ip;
-        cmdtype = CmdType.ClientInfo;
+        cmdType = CmdType.ClientInfo;
     }
 
     /// For receiver.
     constructor(buffer: ByteArray) {
         data = buffer;
-        cmdtype = CmdType.ClientInfo;
+        cmdType = CmdType.ClientInfo;
     }
 
     override fun Encode(): ByteArray {

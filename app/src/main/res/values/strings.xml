@@ -21,4 +21,6 @@
 
     <string name="permission_warring_dialog_title">需要權限</string>
     <string name="location_permission_warring_message">必須許可位置權限，才能使用此app</string>
+
+    <string name="waiting_connection">等待連接中</string>
 </resources>

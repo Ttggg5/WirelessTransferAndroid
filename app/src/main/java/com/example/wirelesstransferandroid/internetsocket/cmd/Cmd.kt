@@ -25,7 +25,7 @@ abstract class Cmd
     // DataLength: 7 byte(max: 5242880 bytes = 5MB), fill 0 in front if it not full.
     // Data: max length is 5242880 bytes.
 
-    var cmdtype: CmdType = CmdType.None
+    var cmdType: CmdType = CmdType.None
         protected set
 
     var data: ByteArray = byteArrayOf() // not included head and tail
@@ -36,7 +36,7 @@ abstract class Cmd
     abstract fun Decode()
 
     protected fun AddHeadTail(data: ByteArray): ByteArray {
-        val cmdString: String = cmdtype.name
+        val cmdString: String = cmdType.name
         val headBytes: ByteArray = ("<$cmdString>").toByteArray(Charsets.US_ASCII)
         val tailBytes: ByteArray = ("<!$cmdString>").toByteArray(Charsets.US_ASCII)
         val dataLengthBytes: ByteArray = (data.size.toString().padStart(7, '0')).toByteArray(Charsets.US_ASCII)

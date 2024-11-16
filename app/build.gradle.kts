@@ -1,3 +1,5 @@
+import java.net.URI
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -51,6 +53,7 @@ dependencies {
 }
 
 dependencies {
+    implementation(libs.androidx.material3.android)
     val nav_version = "2.8.0"
 
     // Jetpack Compose integration
@@ -65,9 +68,10 @@ dependencies {
 
     // Testing Navigation
     androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
-}
 
-dependencies {
     // QR code scanner
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+
+    // loading animation
+    implementation("com.airbnb.android:lottie:6.6.0")
 }
