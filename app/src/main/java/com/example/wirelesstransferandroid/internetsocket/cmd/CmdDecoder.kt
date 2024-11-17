@@ -174,7 +174,7 @@ class CmdDecoder {
                 CmdType.ClientInfo -> cmd = ClientInfoCmd(data)
                 CmdType.FileData -> {}
                 CmdType.FileInfo -> {}
-                CmdType.Reply -> {}
+                CmdType.Reply -> cmd = ReplyCmd(data)
                 CmdType.Screen -> {}
                 CmdType.Keyboard -> {}
                 CmdType.Mouse -> {}

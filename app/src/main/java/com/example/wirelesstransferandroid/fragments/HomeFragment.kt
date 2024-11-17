@@ -85,7 +85,7 @@ class HomeFragment : Fragment() {
                 val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
                 builder.setTitle(R.string.permission_warring_dialog_title)
                 builder.setMessage(R.string.location_permission_warring_message)
-                builder.setPositiveButton(R.string.confirm) { dialogInterface, i ->
+                builder.setPositiveButton(R.string.confirm) { dialogInterface, _ ->
                     dialogInterface.dismiss()
                     requireActivity().finish()
                 }

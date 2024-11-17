@@ -1,9 +1,11 @@
 package com.example.wirelesstransferandroid.internetsocket.MyUdp
 
+import android.net.IpSecManager.UdpEncapsulationSocket
 import com.example.wirelesstransferandroid.internetsocket.cmd.Cmd
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
+import java.net.SocketAddress
 
 class MyUdp(private var port: Int) {
     private var listenSocket = DatagramSocket(port)
@@ -12,31 +14,26 @@ class MyUdp(private var port: Int) {
     private lateinit var sendPacket : DatagramPacket
     val buffer = ByteArray(1024)
 
-    fun send(cmd: Cmd, ip: String){
-        send(cmd.Encode(), ip)
-    }
     fun send(bytes: ByteArray, ip: String){
-        sendPacket = DatagramPacket(bytes,bytes.size, InetAddress.getByName(ip), port)
+        sendPacket = DatagramPacket(bytes, bytes.size, InetAddress.getByName(ip), port)
         listenSocket.send(sendPacket)
     }
 
     fun receive(): ByteArray {
-        listenPacket = recv(listenSocket, buffer)
-        return listenPacket.data
+        val receiverPacket = DatagramPacket(buffer, buffer.size)
+        listenSocket.receive(receiverPacket)
+
+        listenPacket = receiverPacket
+        val result = ByteArray(listenPacket.length)
+        listenPacket.data.copyInto(result, 0, 0, listenPacket.length)
+        return result
     }
 
     fun getSenderIP(): String {
         return listenPacket.address.hostName
     }
 
-    private fun recv(socket: DatagramSocket, receiveBuf: ByteArray): DatagramPacket {
-        val receiverPacket = DatagramPacket(receiveBuf, receiveBuf.size)
-        socket.receive(receiverPacket)
-        return receiverPacket
-    }
-
-    fun close(){
-        listenSocket.close()
+    fun close() {
         listenSocket.close()
     }
 }
