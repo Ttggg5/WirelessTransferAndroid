@@ -3,6 +3,7 @@ import java.net.URI
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -74,4 +75,8 @@ dependencies {
 
     // loading animation
     implementation("com.airbnb.android:lottie:6.6.0")
+
+    // glide
+    implementation(platform("androidx.compose:compose-bom:2024.10.01"))
+    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
 }

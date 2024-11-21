@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.databinding.FragmentHomeBinding
@@ -44,6 +45,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         // request location permission
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
@@ -54,10 +56,24 @@ class HomeFragment : Fragment() {
         binding.deviceIpTv.text = InternetInfo.getPhoneIp(requireContext())
         binding.wifiNameTv.text = InternetInfo.getSSID(requireContext())
 
-        binding.screenShareBtn.setOnClick {
-            findNavController().navigate(R.id.action_homeFragment_to_screenShareFragment)
+        // check is connected to wifi
+        if (binding.deviceIpTv.text.equals("0.0.0.0")) {
+            val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+            builder.setTitle(R.string.wifi_not_connected_dialog_title)
+            builder.setMessage(R.string.wifi_not_connected_message)
+            builder.setPositiveButton(R.string.confirm) { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                requireActivity().finish()
+            }
+            builder.create().show()
         }
 
+        // function buttons
+        binding.screenShareBtn.setOnClick {
+            requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_to_screenShareFragment)
+        }
+
+        // tool bar button click
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.qrScanner -> {
@@ -71,7 +87,6 @@ class HomeFragment : Fragment() {
                 }
                 else -> false
             }
-
         }
     }
 
@@ -79,17 +94,19 @@ class HomeFragment : Fragment() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                binding.wifiNameTv.text = InternetInfo.getSSID(requireContext())
-            } else {
-                val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-                builder.setTitle(R.string.permission_warring_dialog_title)
-                builder.setMessage(R.string.location_permission_warring_message)
-                builder.setPositiveButton(R.string.confirm) { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                    requireActivity().finish()
+            if (grantResults.isNotEmpty()) {
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    binding.wifiNameTv.text = InternetInfo.getSSID(requireContext())
+                } else {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                    builder.setTitle(R.string.permission_warring_dialog_title)
+                    builder.setMessage(R.string.location_permission_warring_message)
+                    builder.setPositiveButton(R.string.confirm) { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                        requireActivity().finish()
+                    }
+                    builder.create().show()
                 }
-                builder.create().show()
             }
         }
     }

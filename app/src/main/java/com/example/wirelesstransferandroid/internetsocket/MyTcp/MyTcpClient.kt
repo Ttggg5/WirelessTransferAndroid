@@ -4,9 +4,15 @@ import android.os.Handler
 import com.example.wirelesstransferandroid.internetsocket.cmd.ClientInfoCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.Cmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.CmdDecoder
+import com.example.wirelesstransferandroid.internetsocket.cmd.RequestCmd
+import com.example.wirelesstransferandroid.internetsocket.cmd.RequestType
 import com.example.wirelesstransferandroid.tools.InternetInfo
+import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
 import java.io.BufferedReader
 import java.io.BufferedWriter
+import java.io.IOException
+import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.io.PrintWriter
@@ -53,73 +59,68 @@ class MyTcpClient(clientIp: String, serverIp: String, port: Int, clientName: Str
         private set
 
     private var timeoutCounter: Int = 0
-    private var indexes: Indexes = Indexes(0, 0)
-    private var buffer: ByteArray = ByteArray(12582912) // 12MB
-    private var tmpBuffer: ByteArray = ByteArray(6291456) // 6MB
+    private var indexes = Indexes(0, 0)
+    private var buffer = ByteArray(12582912) // 12MB
+    private var tmpBuffer = ByteArray(6291456) // 6MB
 
     // Connect to server asynchronously.
-    fun Connect() {
+    fun connect() {
         if (state == MyTcpClientState.Disconnected) {
             state = MyTcpClientState.Waiting
-            Thread {
-                try {
-                    client = Socket(serverIp, port)
-                    val reader = client.getInputStream()
-                    val writer = client.getOutputStream()
 
-                    val clientInfoCmd = ClientInfoCmd(clientName, clientIp)
-                    val bytes = clientInfoCmd.Encode()
-                    writer.write(bytes)
-                    writer.flush()
-
-                    state = MyTcpClientState.Connected
-                    onConnected.invoke()
-
-                    while (true) {
-                        var actualSize = reader.read(tmpBuffer, 0, tmpBuffer.size)
-                        if (actualSize > 0)
-                        {
-                            var tmpSize = buffer.size - indexes.endIndex
-                            if (actualSize <= tmpSize)
-                            {
-                                tmpBuffer.copyInto(buffer, indexes.endIndex, 0, actualSize)
-                                indexes.endIndex += actualSize
-                            }
-                            else
-                            {
-                                tmpBuffer.copyInto(buffer, indexes.endIndex, 0, tmpSize - 1)
-                                tmpBuffer.copyInto(buffer, indexes.endIndex, 0, actualSize - tmpSize - 1)
-                                indexes.endIndex = actualSize - tmpSize
-                            }
-
-                            // prevent it doesn't only read one cmd
-                            while (true)
-                            {
-                                val cmd: Cmd? = CmdDecoder.DecodeCmd(buffer, indexes)
-                                if (cmd != null)
-                                {
-                                    onReceivedCmd.invoke(cmd)
-                                    continue
-                                }
-                                break
-                            }
-                        }
-                    }
-                } catch (ex: Exception) {
-                    if (state != MyTcpClientState.Disconnected) {
-                        state = MyTcpClientState.Disconnected
-                        onDisconnected.invoke()
-                    }
-                }
-            }.start()
+            val thread = Thread(runConnect())
+            thread.start()
         }
     }
 
-    fun SendCmd(cmd: Cmd) {
+    fun runConnect() = Runnable {
+        try {
+            client = Socket(serverIp, port)
+            val reader = client.getInputStream()
+            val writer = client.getOutputStream()
+
+            val clientInfoCmd = ClientInfoCmd(clientName, clientIp)
+            val bytes = clientInfoCmd.Encode()
+            writer.write(bytes)
+            writer.flush()
+
+            state = MyTcpClientState.Connected
+            onConnected.invoke()
+
+            while (true) {
+                var actualSize = reader.read(buffer, indexes.endIndex, buffer.size - indexes.endIndex)
+                if (actualSize > 0)
+                {
+                    indexes.endIndex += actualSize
+                    if (indexes.endIndex >= buffer.size)
+                        indexes.endIndex -= buffer.size
+
+                    // prevent it doesn't only read one cmd
+                    while (true) {
+                        val cmd: Cmd? = CmdDecoder.DecodeCmd(buffer, indexes)
+                        if (cmd != null) {
+                            onReceivedCmd.invoke(cmd)
+                            continue
+                        }
+                        break
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            if (state != MyTcpClientState.Disconnected) {
+                state = MyTcpClientState.Disconnected
+                client.close()
+                onDisconnected.invoke()
+            }
+        }
+    }
+
+    fun sendCmd(cmd: Cmd) {
         try
         {
             val bytes = cmd.Encode()
             client.getOutputStream().write(bytes)
+            client.getOutputStream().flush()
         }
         catch (ex: Exception)
         {
@@ -131,12 +132,14 @@ class MyTcpClient(clientIp: String, serverIp: String, port: Int, clientName: Str
         }
     }
 
-    fun Disconnect() {
-        if (state != MyTcpClientState.Disconnected)
-        {
-            state = MyTcpClientState.Disconnected
-            client.close()
-            onDisconnected.invoke()
+    fun disconnect() {
+        synchronized(state) {
+            if (state != MyTcpClientState.Disconnected)
+            {
+                state = MyTcpClientState.Disconnected
+                client.close()
+                onDisconnected.invoke()
+            }
         }
     }
 }

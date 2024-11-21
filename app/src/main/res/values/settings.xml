@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="udp_port">8888</integer>
-    <integer name="tcp_port">8889</integer>
+    <integer name="udp_port">13210</integer>
+    <integer name="tcp_port">13215</integer>
 </resources>

@@ -21,6 +21,7 @@
 
     <!-- hint -->
     <string name="waiting_connection">等待連接中</string>
+    <string name="connected_to_pc">以連接到電腦</string>
 
     <!-- dialogs -->
     <string name="confirm">確認</string>
@@ -28,6 +29,9 @@
 
     <string name="permission_warring_dialog_title">需要權限</string>
     <string name="location_permission_warring_message">必須許可位置權限，才能使用此app</string>
+
+    <string name="wifi_not_connected_dialog_title">Wifi未連接</string>
+    <string name="wifi_not_connected_message">請連接Wifi，才能使用此app</string>
 
     <string name="screen_share_request_dialog_title">螢幕分享要求</string>
     <string name="screen_share_request_message">想要分享螢幕給你，是否要接受?</string>

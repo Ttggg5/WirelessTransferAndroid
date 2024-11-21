@@ -9,11 +9,14 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.databinding.FragmentScreenShareBinding
 import com.example.wirelesstransferandroid.internetsocket.MyTcp.Indexes
+import com.example.wirelesstransferandroid.internetsocket.MyTcp.MyTcpClient
 import com.example.wirelesstransferandroid.internetsocket.MyUdp.MyUdp
 import com.example.wirelesstransferandroid.internetsocket.cmd.ClientInfoCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.Cmd
@@ -84,7 +87,11 @@ class ScreenShareFragment : Fragment() {
 
                                 if (dialogResult) {
                                     myUdpListener.send(ReplyCmd(ReplyType.Accept).Encode(), myUdpListener.getSenderIP())
-                                    findNavController().navigate(R.id.action_screenShareFragment_to_displayScreenFragment)
+
+                                    requireActivity().runOnUiThread {
+                                        val bundle = bundleOf("serverIp" to myUdpListener.getSenderIP())
+                                        requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_screenShareFragment_to_displayScreenFragment, bundle)
+                                    }
                                 } else {
                                     myUdpListener.send(ReplyCmd(ReplyType.Refuse).Encode(), myUdpListener.getSenderIP())
                                 }

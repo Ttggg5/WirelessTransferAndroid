@@ -24,7 +24,8 @@
             app:destination="@id/homeFragment" />
         <action
             android:id="@+id/action_screenShareFragment_to_displayScreenFragment"
-            app:destination="@id/displayScreenFragment" />
+            app:destination="@id/displayScreenFragment">
+        </action>
     </fragment>
     <fragment
         android:id="@+id/displayScreenFragment"

@@ -23,8 +23,9 @@ class CmdDecoder {
             var cmdType: CmdType = CmdType.None
             var cmdStr = ""
             var length = indexes.endIndex - indexes.startIndex
-            if (indexes.endIndex - indexes.startIndex < 0)
-                length = buffer.size - indexes.startIndex + indexes.endIndex + 1
+            if (length < 0)
+                length = buffer.size - indexes.startIndex + indexes.endIndex
+            else if (length == 0) return null
 
             if (buffer[indexes.startIndex] == frontSymbol)
             {
@@ -32,9 +33,9 @@ class CmdDecoder {
                 var fl = length
                 if (indexes.startIndex + length > buffer.size) {
                     fl = buffer.size - indexes.startIndex
-                    buffer.copyInto(tmpBuffer, fl, 0, length - fl - 1)
+                    buffer.copyInto(tmpBuffer, fl, 0, length - fl)
                 }
-                buffer.copyInto(tmpBuffer, 0, indexes.startIndex, indexes.startIndex + fl - 1)
+                buffer.copyInto(tmpBuffer, 0, indexes.startIndex, indexes.startIndex + fl)
 
                 // find cmd type
                 var previousIndex = 1
@@ -45,7 +46,7 @@ class CmdDecoder {
                     {
                         if (tmpBuffer[curIndex] == backSymbol)
                         {
-                            cmdStr = tmpBuffer.sliceArray(previousIndex..<previousIndex + curIndex - previousIndex).toString(Charsets.US_ASCII)
+                            cmdStr = tmpBuffer.sliceArray(previousIndex..<curIndex).toString(Charsets.US_ASCII)
                             try {
                                 cmdType = CmdType.valueOf(cmdStr)
                             } catch (ex: IllegalArgumentException) {
@@ -59,7 +60,7 @@ class CmdDecoder {
                 }
                 catch (ex: IndexOutOfBoundsException)
                 {
-                    return null;
+                    return null
                 }
 
                 // find data length
@@ -72,11 +73,15 @@ class CmdDecoder {
                     return null
                 }
 
-                if (dataLength > length) return null
-
                 // find end symbol
                 previousIndex += 7
                 curIndex = previousIndex + dataLength + 1
+
+                if (curIndex > length) {
+                    //indexes.startIndex = indexes.endIndex
+                    return null
+                }
+
                 if (tmpBuffer[curIndex] == endSymbol)
                 {
                     // create cmd class
@@ -175,12 +180,12 @@ class CmdDecoder {
                 CmdType.FileData -> {}
                 CmdType.FileInfo -> {}
                 CmdType.Reply -> cmd = ReplyCmd(data)
-                CmdType.Screen -> {}
+                CmdType.Screen -> cmd = ScreenCmd(data)
                 CmdType.Keyboard -> {}
                 CmdType.Mouse -> {}
                 CmdType.Webcam -> {}
                 CmdType.Request -> cmd = RequestCmd(data)
-                CmdType.ScreenInfo -> {}
+                CmdType.ScreenInfo -> cmd = ScreenInfoCmd(data)
                 else -> return null
             }
             cmd?.Decode()

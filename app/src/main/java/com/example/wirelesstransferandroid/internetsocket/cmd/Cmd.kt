@@ -10,6 +10,7 @@ enum class CmdType {
     Screen,
     Keyboard,
     Mouse,
+    MouseMove,
     Webcam,
     Request,
     ScreenInfo,
