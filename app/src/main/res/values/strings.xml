@@ -21,7 +21,8 @@
 
     <!-- hint -->
     <string name="waiting_connection">等待連接中</string>
-    <string name="connected_to_pc">以連接到電腦</string>
+    <string name="connected_to_pc">已連接到電腦</string>
+    <string name="disconnected_from_pc">與電腦的連線中斷</string>
 
     <!-- dialogs -->
     <string name="confirm">確認</string>

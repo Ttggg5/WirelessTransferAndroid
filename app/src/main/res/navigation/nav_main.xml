@@ -24,12 +24,11 @@
             app:destination="@id/homeFragment" />
         <action
             android:id="@+id/action_screenShareFragment_to_displayScreenFragment"
-            app:destination="@id/displayScreenFragment">
-        </action>
+            app:destination="@id/displayScreenFragment" />
     </fragment>
     <fragment
         android:id="@+id/displayScreenFragment"
-        android:name="com.example.wirelesstransferandroid.DisplayScreenFragment"
+        android:name="com.example.wirelesstransferandroid.fragments.DisplayScreenFragment"
         android:label="fragment_display_screen"
         tools:layout="@layout/fragment_display_screen" >
         <action

@@ -1,19 +1,21 @@
 package com.example.wirelesstransferandroid.internetsocket.cmd
 
+import java.util.Locale
+
 class MouseMoveCmd: Cmd {
     // Correct message format:
     //---------------------------------------------------------------------------------
     // data = MouseDisplacementX + "," + MouseDisplacementY
     //---------------------------------------------------------------------------------
 
-    var MouseDisplacementX = 0
+    var MouseDisplacementX = 0f
         private set
 
-    var MouseDisplacementY = 0
+    var MouseDisplacementY = 0f
         private set
 
     // For sender.
-    constructor(mouseDisplacementX: Int, mouseDisplacementY: Int) {
+    constructor(mouseDisplacementX: Float, mouseDisplacementY: Float) {
         MouseDisplacementX = mouseDisplacementX
         MouseDisplacementY = mouseDisplacementY
         cmdType = CmdType.MouseMove
@@ -26,13 +28,13 @@ class MouseMoveCmd: Cmd {
     }
 
     override fun Encode(): ByteArray {
-        data = (MouseDisplacementX.toString() + "," + MouseDisplacementY.toString()).toByteArray(Charsets.US_ASCII)
+        data = String.format(Locale.getDefault(), "%f,%f", MouseDisplacementX, MouseDisplacementY).toByteArray(Charsets.US_ASCII)
         return AddHeadTail(data)
     }
 
     override fun Decode() {
         val tmp = data.toString(Charsets.US_ASCII).split(",")
-        MouseDisplacementX = tmp[0].toInt()
-        MouseDisplacementY = tmp[0].toInt()
+        MouseDisplacementX = tmp[0].toFloat()
+        MouseDisplacementY = tmp[1].toFloat()
     }
 }

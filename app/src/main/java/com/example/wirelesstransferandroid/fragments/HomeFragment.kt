@@ -35,6 +35,9 @@ class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
 
+    var x = 0f
+    var y = 0f
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -70,7 +73,7 @@ class HomeFragment : Fragment() {
 
         // function buttons
         binding.screenShareBtn.setOnClick {
-            requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_to_screenShareFragment)
+            findNavController().navigate(R.id.action_homeFragment_to_screenShareFragment)
         }
 
         // tool bar button click

@@ -103,75 +103,6 @@ class CmdDecoder {
             }
         }
 
-        // Normal decode (no cycle).
-        fun DecodeCmd(buffer: ByteArray, indexes: Indexes, length: Int): Cmd? {
-            indexes.endIndex = 0
-            var cmd: Cmd? = null
-            var cmdType: CmdType = CmdType.None
-            var cmdStr = ""
-            if (buffer[indexes.startIndex] == frontSymbol)
-            {
-                var tmpBuffer = ByteArray(length)
-                buffer.copyInto(tmpBuffer, 0, indexes.startIndex, length - 1)
-
-                // find cmd type
-                var previousIndex = 1
-                var curIndex = previousIndex
-                try
-                {
-                    while (true)
-                    {
-                        if (tmpBuffer[curIndex] == backSymbol)
-                        {
-                            cmdStr = tmpBuffer.sliceArray(previousIndex..<previousIndex + curIndex - previousIndex).toString(Charsets.US_ASCII)
-                            try {
-                                cmdType = CmdType.valueOf(cmdStr)
-                            } catch (ex: IllegalArgumentException) {
-                                indexes.startIndex = indexes.endIndex
-                                return null
-                            }
-                            break
-                        }
-                        curIndex++
-                    }
-                }
-                catch (ex: IndexOutOfBoundsException)
-                {
-                    return null
-                }
-
-                // find data length
-                previousIndex = curIndex + 1
-                var dataLength = 0
-                try {
-                    dataLength = tmpBuffer.sliceArray(previousIndex..<previousIndex + 7).toString(Charsets.US_ASCII).toInt()
-                } catch (ex: Exception) {
-                    indexes.startIndex = indexes.endIndex
-                    return null
-                }
-
-                if (dataLength > length) return null
-
-                // find end symbol
-                previousIndex += 7
-                curIndex = previousIndex + dataLength + 1
-                if (tmpBuffer[curIndex] == endSymbol)
-                {
-                    // create cmd class
-                    var data = tmpBuffer.sliceArray(previousIndex..<previousIndex + dataLength)
-                    cmd = CreateDecodeCmd(cmdType, data)
-
-                    indexes.startIndex += curIndex + cmdStr.length + 2
-                    if (indexes.startIndex >= buffer.size)
-                        indexes.startIndex -= buffer.size
-
-                    return cmd
-                }
-                else return null
-            }
-            return cmd;
-        }
-
         fun CreateDecodeCmd(cmdType: CmdType, data: ByteArray): Cmd? {
             var cmd: Cmd? = null
             when (cmdType) {
@@ -182,7 +113,8 @@ class CmdDecoder {
                 CmdType.Reply -> cmd = ReplyCmd(data)
                 CmdType.Screen -> cmd = ScreenCmd(data)
                 CmdType.Keyboard -> {}
-                CmdType.Mouse -> {}
+                CmdType.Mouse -> cmd = MouseCmd(data)
+                CmdType.MouseMove -> cmd = MouseMoveCmd(data)
                 CmdType.Webcam -> {}
                 CmdType.Request -> cmd = RequestCmd(data)
                 CmdType.ScreenInfo -> cmd = ScreenInfoCmd(data)

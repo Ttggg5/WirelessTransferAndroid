@@ -7,17 +7,25 @@ import com.example.wirelesstransferandroid.internetsocket.cmd.CmdDecoder
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestType
 import com.example.wirelesstransferandroid.tools.InternetInfo
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.BufferedReader
 import java.io.BufferedWriter
+import java.io.DataInputStream
+import java.io.DataOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.io.PrintWriter
+import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketAddress
+import java.util.ArrayDeque
+import javax.net.SocketFactory
 
 
 enum class MyTcpClientState {
@@ -28,7 +36,7 @@ enum class MyTcpClientState {
 
 class Indexes(var startIndex: Int = 0, var endIndex: Int = 0)
 
-class MyTcpClient(clientIp: String, serverIp: String, port: Int, clientName: String) {
+class MyTcpClient(val clientIp: String, val serverIp: String, val port: Int, clientName: String) {
     private var onConnected: () -> Unit = {}
     fun setOnConnected(block: () -> Unit) {
         onConnected = block
@@ -50,18 +58,17 @@ class MyTcpClient(clientIp: String, serverIp: String, port: Int, clientName: Str
     lateinit var client: Socket
         private set
 
+    lateinit var reader: InputStream
+        private set
 
-    val clientIp: String = clientIp
-    val serverIp: String = serverIp
-    val port: Int = port
+    lateinit var writer: OutputStream
+        private set
 
     var clientName: String = clientName
         private set
 
-    private var timeoutCounter: Int = 0
     private var indexes = Indexes(0, 0)
     private var buffer = ByteArray(12582912) // 12MB
-    private var tmpBuffer = ByteArray(6291456) // 6MB
 
     // Connect to server asynchronously.
     fun connect() {
@@ -76,21 +83,21 @@ class MyTcpClient(clientIp: String, serverIp: String, port: Int, clientName: Str
     fun runConnect() = Runnable {
         try {
             client = Socket(serverIp, port)
-            val reader = client.getInputStream()
-            val writer = client.getOutputStream()
+            reader = client.getInputStream()
+            writer = client.getOutputStream()
 
+            // send ClientInfo
             val clientInfoCmd = ClientInfoCmd(clientName, clientIp)
-            val bytes = clientInfoCmd.Encode()
-            writer.write(bytes)
+            writer.write(clientInfoCmd.Encode())
             writer.flush()
 
             state = MyTcpClientState.Connected
             onConnected.invoke()
 
+            // start reader
             while (true) {
                 var actualSize = reader.read(buffer, indexes.endIndex, buffer.size - indexes.endIndex)
-                if (actualSize > 0)
-                {
+                if (actualSize > 0) {
                     indexes.endIndex += actualSize
                     if (indexes.endIndex >= buffer.size)
                         indexes.endIndex -= buffer.size
@@ -116,16 +123,13 @@ class MyTcpClient(clientIp: String, serverIp: String, port: Int, clientName: Str
     }
 
     fun sendCmd(cmd: Cmd) {
-        try
-        {
-            val bytes = cmd.Encode()
-            client.getOutputStream().write(bytes)
-            client.getOutputStream().flush()
-        }
-        catch (ex: Exception)
-        {
-            if (state != MyTcpClientState.Disconnected)
-            {
+        if (state != MyTcpClientState.Connected) return
+
+        try {
+            writer.write(cmd.Encode())
+            writer.flush()
+        } catch (ex: Exception) {
+            if (state != MyTcpClientState.Disconnected) {
                 state = MyTcpClientState.Disconnected
                 onDisconnected.invoke()
             }
@@ -134,8 +138,7 @@ class MyTcpClient(clientIp: String, serverIp: String, port: Int, clientName: Str
 
     fun disconnect() {
         synchronized(state) {
-            if (state != MyTcpClientState.Disconnected)
-            {
+            if (state != MyTcpClientState.Disconnected) {
                 state = MyTcpClientState.Disconnected
                 client.close()
                 onDisconnected.invoke()

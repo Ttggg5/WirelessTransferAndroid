@@ -25,6 +25,7 @@
 
         <!-- Note: A RecyclerView can also be used -->
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nsv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -133,6 +134,7 @@
                         android:paddingEnd="10dp"/>
 
                     <com.example.wirelesstransferandroid.customviews.FunctionBtnView
+                        android:id="@+id/settingBtn"
                         app:function_icon="@drawable/setting_icon"
                         android:layout_width="0dp"
                         app:function_name="@string/setting"
