@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.databinding.FragmentDisplayScreenBinding
@@ -25,6 +26,7 @@ import com.example.wirelesstransferandroid.internetsocket.cmd.RequestCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestType
 import com.example.wirelesstransferandroid.internetsocket.cmd.ScreenCmd
 import com.example.wirelesstransferandroid.tools.InternetInfo
+import kotlinx.coroutines.launch
 
 
 class DisplayScreenFragment : Fragment() {
@@ -42,6 +44,10 @@ class DisplayScreenFragment : Fragment() {
     var preActionTime = 0L
 
     var isTwoFingerAction = false
+    var isScrolling = false
+
+    var isLeftButtonClicked = false
+    var LeftButtonClickedTime = 0L
 
     var movementX = 0f
     var movementY = 0f
@@ -62,6 +68,7 @@ class DisplayScreenFragment : Fragment() {
             requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             toggleFullScreen()
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
 
         binding.screenIV.setOnTouchListener { _, event ->
@@ -74,6 +81,13 @@ class DisplayScreenFragment : Fragment() {
                     preActionY = event.y
                     preAction = event.action
                     preActionTime = event.eventTime
+
+                    // hold left button
+                    if (isLeftButtonClicked && event.eventTime <= LeftButtonClickedTime + 150) {
+                        lifecycleScope.launch {
+                            myTcpClient?.sendCmd(MouseCmd(PointF(0f, 0f), MouseAct.LeftButtonDown, 0, false))
+                        }
+                    }
                 }
 
                 MotionEvent.ACTION_POINTER_DOWN -> {
@@ -89,15 +103,18 @@ class DisplayScreenFragment : Fragment() {
                     preX = event.x
                     preY = event.y
 
-                    if (event.pointerCount > 1) {
-                        Thread {
+                    if (event.pointerCount == 2) {
+                        isScrolling = true
+                        // scroll
+                        lifecycleScope.launch {
                             myTcpClient?.sendCmd(MouseCmd(PointF(0f, 0f), MouseAct.MiddleButtonRolled, movementY.toInt() * 3, false))
-                        }.start()
+                        }
                     }
-                    else {
-                        Thread {
-                            myTcpClient?.sendCmd(MouseMoveCmd(movementX, movementY))
-                        }.start()
+                    else if (!isScrolling){
+                        // move mouse
+                        lifecycleScope.launch {
+                            myTcpClient?.sendCmd(MouseMoveCmd(movementX * 1.5f, movementY * 1.5f))
+                        }
                     }
                 }
 
@@ -116,23 +133,34 @@ class DisplayScreenFragment : Fragment() {
                             if (isTwoFingerAction) {
                                 if (event.eventTime <= preActionTime + 150) {
                                     // right button click
-                                    Thread {
+                                    lifecycleScope.launch {
                                         myTcpClient?.sendCmd(MouseCmd(PointF(0f, 0f), MouseAct.RightButtonDown, 0, false))
                                         myTcpClient?.sendCmd(MouseCmd(PointF(0f, 0f), MouseAct.RightButtonUp, 0, false))
-                                    }.start()
+                                    }
                                 }
                             }
                             else {
                                 // left button click
-                                Thread {
+                                lifecycleScope.launch {
                                     myTcpClient?.sendCmd(MouseCmd(PointF(0f, 0f), MouseAct.LeftButtonDown, 0, false))
                                     myTcpClient?.sendCmd(MouseCmd(PointF(0f, 0f), MouseAct.LeftButtonUp, 0, false))
-                                }.start()
+                                }
+
+                                isLeftButtonClicked = true
+                                LeftButtonClickedTime = event.eventTime
                             }
+                        }
+                        else if (isLeftButtonClicked) {
+                            // release left button
+                            lifecycleScope.launch {
+                                myTcpClient?.sendCmd(MouseCmd(PointF(0f, 0f), MouseAct.LeftButtonUp, 0, false))
+                            }
+                            isLeftButtonClicked = false
                         }
                     }
 
                     isTwoFingerAction = false
+                    isScrolling = false
                     preAction = event.action
                 }
             }
@@ -191,6 +219,7 @@ class DisplayScreenFragment : Fragment() {
             requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             toggleFullScreen()
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
     }
 
@@ -208,7 +237,6 @@ class DisplayScreenFragment : Fragment() {
         if (requireActivity().requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             if (myTcpClient?.state == MyTcpClientState.Connected) {
                 try{
-                    myTcpClient?.sendCmd(RequestCmd(RequestType.Disconnect, myTcpClient!!.clientName))
                     myTcpClient?.disconnect()
                 } catch (ex: Exception) {
 

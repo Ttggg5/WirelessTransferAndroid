@@ -78,4 +78,7 @@ dependencies {
     // glide
     implementation(platform("androidx.compose:compose-bom:2024.11.00"))
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+
+    // coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
 }

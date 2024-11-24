@@ -7,8 +7,10 @@ import com.example.wirelesstransferandroid.internetsocket.cmd.CmdDecoder
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestType
 import com.example.wirelesstransferandroid.tools.InternetInfo
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.BufferedReader
@@ -122,16 +124,18 @@ class MyTcpClient(val clientIp: String, val serverIp: String, val port: Int, cli
         }
     }
 
-    fun sendCmd(cmd: Cmd) {
-        if (state != MyTcpClientState.Connected) return
+    suspend fun sendCmd(cmd: Cmd) {
+        withContext(Dispatchers.IO) {
+            if (state != MyTcpClientState.Connected) return@withContext
 
-        try {
-            writer.write(cmd.Encode())
-            writer.flush()
-        } catch (ex: Exception) {
-            if (state != MyTcpClientState.Disconnected) {
-                state = MyTcpClientState.Disconnected
-                onDisconnected.invoke()
+            try {
+                writer.write(cmd.Encode())
+                writer.flush()
+            } catch (ex: Exception) {
+                if (state != MyTcpClientState.Disconnected) {
+                    state = MyTcpClientState.Disconnected
+                    onDisconnected.invoke()
+                }
             }
         }
     }
