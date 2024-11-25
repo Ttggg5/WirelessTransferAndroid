@@ -3,10 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.DisplayScreenFragment">
+    tools:context=".fragments.DisplayScreenFragment"
+    android:background="@color/black">
     <ImageView
         android:id="@+id/screenIV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/screen_share"
         android:scaleType="fitCenter" />
+
+    <ImageButton
+        android:id="@+id/keyboardImgBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/baseline_keyboard_24"
+        android:backgroundTint="@color/black"
+        android:contentDescription="@string/keyboard_btn"
+        android:layout_gravity="end"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"/>
 </FrameLayout>

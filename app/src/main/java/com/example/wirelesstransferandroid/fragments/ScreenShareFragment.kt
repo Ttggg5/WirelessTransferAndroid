@@ -47,7 +47,7 @@ class ScreenShareFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.topAppBar.setNavigationOnClickListener {
-            findNavController().popBackStack()
+            requireActivity().findNavController(R.id.fragmentContainerView).popBackStack()
         }
 
         Thread {
@@ -90,7 +90,7 @@ class ScreenShareFragment : Fragment() {
 
                                     requireActivity().runOnUiThread {
                                         val bundle = bundleOf("serverIp" to myUdpListener.getSenderIP())
-                                        findNavController().navigate(R.id.action_screenShareFragment_to_displayScreenFragment, bundle)
+                                        requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_screenShareFragment_to_displayScreenFragment, bundle)
                                     }
                                 } else {
                                     myUdpListener.send(ReplyCmd(ReplyType.Refuse).Encode(), myUdpListener.getSenderIP())

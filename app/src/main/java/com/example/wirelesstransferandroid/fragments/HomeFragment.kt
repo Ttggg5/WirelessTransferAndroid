@@ -73,7 +73,7 @@ class HomeFragment : Fragment() {
 
         // function buttons
         binding.screenShareBtn.setOnClick {
-            findNavController().navigate(R.id.action_homeFragment_to_screenShareFragment)
+            requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_to_screenShareFragment)
         }
 
         // tool bar button click

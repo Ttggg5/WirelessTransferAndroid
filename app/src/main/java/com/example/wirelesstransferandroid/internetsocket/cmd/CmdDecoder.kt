@@ -112,7 +112,7 @@ class CmdDecoder {
                 CmdType.FileInfo -> {}
                 CmdType.Reply -> cmd = ReplyCmd(data)
                 CmdType.Screen -> cmd = ScreenCmd(data)
-                CmdType.Keyboard -> {}
+                CmdType.Keyboard -> cmd = KeyboardCmd(data)
                 CmdType.Mouse -> cmd = MouseCmd(data)
                 CmdType.MouseMove -> cmd = MouseMoveCmd(data)
                 CmdType.Webcam -> {}
