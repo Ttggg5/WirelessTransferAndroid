@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_screenShareFragment"
             app:destination="@id/screenShareFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_displayScreenFragment"
+            app:destination="@id/displayScreenFragment" />
     </fragment>
     <fragment
         android:id="@+id/screenShareFragment"
@@ -30,9 +33,5 @@
         android:id="@+id/displayScreenFragment"
         android:name="com.example.wirelesstransferandroid.fragments.DisplayScreenFragment"
         android:label="fragment_display_screen"
-        tools:layout="@layout/fragment_display_screen" >
-        <action
-            android:id="@+id/action_displayScreenFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_display_screen" />
 </navigation>

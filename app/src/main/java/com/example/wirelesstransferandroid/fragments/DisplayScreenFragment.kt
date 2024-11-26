@@ -32,7 +32,11 @@ import com.example.wirelesstransferandroid.internetsocket.cmd.RequestType
 import com.example.wirelesstransferandroid.internetsocket.cmd.ScreenCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.VirtualKeyCode
 import com.example.wirelesstransferandroid.tools.InternetInfo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class DisplayScreenFragment : Fragment() {
@@ -54,6 +58,9 @@ class DisplayScreenFragment : Fragment() {
 
     var isLeftButtonClicked = false
     var LeftButtonClickedTime = 0L
+
+    lateinit var clickJob: Job
+    var disableClick = false
 
     var movementX = 0f
     var movementY = 0f
@@ -131,6 +138,8 @@ class DisplayScreenFragment : Fragment() {
     }
 
     fun screenIVOnTouch(event: MotionEvent) {
+        if (myTcpClient?.state != MyTcpClientState.Connected) return
+
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 preX = event.x
@@ -143,9 +152,12 @@ class DisplayScreenFragment : Fragment() {
 
                 // hold left button
                 if (isLeftButtonClicked && event.eventTime <= LeftButtonClickedTime + 150) {
+                    disableClick = true
+                    /*
                     lifecycleScope.launch {
                         myTcpClient?.sendCmd(MouseCmd(PointF(0f, 0f), MouseAct.LeftButtonDown, 0, false))
                     }
+                    */
                 }
             }
 
@@ -187,8 +199,8 @@ class DisplayScreenFragment : Fragment() {
                 movementY = 0f
 
                 if (preAction == MotionEvent.ACTION_DOWN) {
-                    if (event.x in preActionX - 10..preActionX + 10 &&
-                        event.y in preActionY - 10..preActionY + 10) {
+                    if (event.x in preActionX - 20..preActionX + 20 &&
+                        event.y in preActionY - 20..preActionY + 20) {
                         if (isTwoFingerAction) {
                             if (event.eventTime <= preActionTime + 150) {
                                 // right button click
@@ -200,9 +212,13 @@ class DisplayScreenFragment : Fragment() {
                         }
                         else {
                             // left button click
-                            lifecycleScope.launch {
-                                myTcpClient?.sendCmd(MouseCmd(PointF(0f, 0f), MouseAct.LeftButtonDown, 0, false))
-                                myTcpClient?.sendCmd(MouseCmd(PointF(0f, 0f), MouseAct.LeftButtonUp, 0, false))
+                            clickJob = lifecycleScope.launch {
+                                withContext(Dispatchers.IO) {
+                                    myTcpClient?.sendCmd(MouseCmd(PointF(0f, 0f), MouseAct.LeftButtonDown, 0, false))
+                                    delay(100)
+                                    if (!disableClick)
+                                        myTcpClient?.sendCmd(MouseCmd(PointF(0f, 0f), MouseAct.LeftButtonUp, 0, false))
+                                }
                             }
 
                             isLeftButtonClicked = true
@@ -214,6 +230,7 @@ class DisplayScreenFragment : Fragment() {
                         lifecycleScope.launch {
                             myTcpClient?.sendCmd(MouseCmd(PointF(0f, 0f), MouseAct.LeftButtonUp, 0, false))
                         }
+                        disableClick = false
                         isLeftButtonClicked = false
                     }
                 }
@@ -233,7 +250,7 @@ class DisplayScreenFragment : Fragment() {
     fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
-                requireActivity().findNavController(R.id.fragmentContainerView).popBackStack()
+                myTcpClient?.disconnect()
             }
 
             in KeyEvent.KEYCODE_SHIFT_LEFT..KeyEvent.KEYCODE_SHIFT_RIGHT -> {}

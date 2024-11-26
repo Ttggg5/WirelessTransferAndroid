@@ -84,7 +84,8 @@ class MyTcpClient(val clientIp: String, val serverIp: String, val port: Int, cli
 
     fun runConnect() = Runnable {
         try {
-            client = Socket(serverIp, port)
+            client = Socket()
+            client.connect(InetSocketAddress(serverIp, port), 1000)
             reader = client.getInputStream()
             writer = client.getOutputStream()
 
@@ -118,7 +119,7 @@ class MyTcpClient(val clientIp: String, val serverIp: String, val port: Int, cli
         } catch (ex: Exception) {
             if (state != MyTcpClientState.Disconnected) {
                 state = MyTcpClientState.Disconnected
-                client.close()
+                client?.close()
                 onDisconnected.invoke()
             }
         }
@@ -144,7 +145,7 @@ class MyTcpClient(val clientIp: String, val serverIp: String, val port: Int, cli
         synchronized(state) {
             if (state != MyTcpClientState.Disconnected) {
                 state = MyTcpClientState.Disconnected
-                client.close()
+                client?.close()
                 onDisconnected.invoke()
             }
         }

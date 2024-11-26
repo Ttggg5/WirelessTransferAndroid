@@ -24,6 +24,7 @@
     <string name="connected_to_pc">已連接到電腦</string>
     <string name="disconnected_from_pc">與電腦的連線中斷</string>
     <string name="keyboard_btn">鍵盤</string>
+    <string name="incorrect_format">格式不正確</string>
 
     <!-- dialogs -->
     <string name="confirm">確認</string>

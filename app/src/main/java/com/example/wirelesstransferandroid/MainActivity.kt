@@ -18,6 +18,7 @@ import androidx.fragment.app.findFragment
 import androidx.navigation.findNavController
 import com.example.wirelesstransferandroid.databinding.FragmentHomeBinding
 import com.example.wirelesstransferandroid.fragments.DisplayScreenFragment
+import com.example.wirelesstransferandroid.fragments.HomeFragment
 
 class MainActivity : AppCompatActivity() {
     lateinit var fragmentContainerView: FragmentContainerView
@@ -44,6 +45,14 @@ class MainActivity : AppCompatActivity() {
             }
         } catch (ex: Exception) {
 
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            val fragment = findNavController(R.id.fragmentContainerView).currentDestination
+            if(fragment?.id == R.id.homeFragment)
+                finish()
+            else
+                findNavController(R.id.fragmentContainerView).popBackStack()
         }
         return true
     }

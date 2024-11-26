@@ -9,6 +9,7 @@ enum class RequestType {
     FileShare,
     PhoneClientInfoShareScreen,
     PhoneClientInfoFileShare,
+    QRConnect,
 }
 
 class RequestCmd: Cmd {
