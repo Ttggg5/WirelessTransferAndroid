@@ -10,4 +10,6 @@
     <color name="main2_pressed">#3C3C3C</color>
 
     <color name="background">#FF313131</color>
+
+    <color name="cancel">#FFCD5C5C</color>
 </resources>

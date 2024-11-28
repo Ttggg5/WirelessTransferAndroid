@@ -79,6 +79,10 @@ class HomeFragment : Fragment() {
                             val bundle = bundleOf("serverIp" to content[1])
                             requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_to_displayScreenFragment, bundle)
                         }
+                        else if (content[0] == FUNCTION_FILE_SHARE) {
+                            val bundle = bundleOf("serverIp" to content[1])
+                            requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_to_fileShareTransferingFragment, bundle)
+                        }
                     }
                 }
             }.start()
@@ -123,6 +127,10 @@ class HomeFragment : Fragment() {
         // function buttons
         binding.screenShareBtn.setOnClick {
             requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_to_screenShareFragment)
+        }
+
+        binding.fileShareBtn.setOnClick {
+            requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_to_fileShareFragment)
         }
 
         // tool bar button click

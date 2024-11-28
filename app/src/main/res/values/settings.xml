@@ -2,4 +2,5 @@
 <resources>
     <integer name="udp_port">13210</integer>
     <integer name="tcp_port">13215</integer>
+    <string name="save_directory_name">WirelessTransfer</string>
 </resources>

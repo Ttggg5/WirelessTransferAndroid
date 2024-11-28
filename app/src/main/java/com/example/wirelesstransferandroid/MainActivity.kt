@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
                 val dsf = supportFragmentManager.findFragmentById(fragmentContainerView.id)?.childFragmentManager?.fragments[0] as DisplayScreenFragment
                 return dsf.onKeyUp(keyCode, event)
             }
+            else if (fragment?.id == R.id.fileShareTransferingFragment) return true
         } catch (ex: Exception) {
 
         }

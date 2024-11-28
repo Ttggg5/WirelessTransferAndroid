@@ -16,6 +16,12 @@
         <action
             android:id="@+id/action_homeFragment_to_displayScreenFragment"
             app:destination="@id/displayScreenFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_fileShareFragment"
+            app:destination="@id/fileShareFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_fileShareTransferingFragment"
+            app:destination="@id/fileShareTransferingFragment" />
     </fragment>
     <fragment
         android:id="@+id/screenShareFragment"
@@ -34,4 +40,31 @@
         android:name="com.example.wirelesstransferandroid.fragments.DisplayScreenFragment"
         android:label="fragment_display_screen"
         tools:layout="@layout/fragment_display_screen" />
+    <fragment
+        android:id="@+id/fileShareFragment"
+        android:name="com.example.wirelesstransferandroid.fragments.FileShareFragment"
+        android:label="fragment_file_share"
+        tools:layout="@layout/fragment_file_share" >
+        <action
+            android:id="@+id/action_fileShareFragment_to_fileShareReceiveFragment"
+            app:destination="@id/fileShareReceiveFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fileShareReceiveFragment"
+        android:name="com.example.wirelesstransferandroid.fragments.FileShareReceiveFragment"
+        android:label="fragment_file_share_receive"
+        tools:layout="@layout/fragment_file_share_receive" >
+        <action
+            android:id="@+id/action_fileShareReceiveFragment_to_fileShareTransferingFragment"
+            app:destination="@id/fileShareTransferingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fileShareTransferingFragment"
+        android:name="com.example.wirelesstransferandroid.fragments.FileShareTransferringFragment"
+        android:label="fragment_file_share_transfering"
+        tools:layout="@layout/fragment_file_share_transferring" >
+        <action
+            android:id="@+id/action_fileShareTransferingFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>

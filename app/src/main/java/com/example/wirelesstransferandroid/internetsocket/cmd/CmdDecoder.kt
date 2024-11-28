@@ -108,8 +108,8 @@ class CmdDecoder {
             when (cmdType) {
                 CmdType.Alive -> {}
                 CmdType.ClientInfo -> cmd = ClientInfoCmd(data)
-                CmdType.FileData -> {}
-                CmdType.FileInfo -> {}
+                CmdType.FileData -> cmd = FileDataCmd(data)
+                CmdType.FileInfo -> cmd = FileInfoCmd(data)
                 CmdType.Reply -> cmd = ReplyCmd(data)
                 CmdType.Screen -> cmd = ScreenCmd(data)
                 CmdType.Keyboard -> cmd = KeyboardCmd(data)

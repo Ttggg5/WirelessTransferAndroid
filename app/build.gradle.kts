@@ -81,4 +81,7 @@ dependencies {
 
     // coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+
+    // GIF
+    implementation("pl.droidsonroids.gif:android-gif-drawable:1.2.22")
 }

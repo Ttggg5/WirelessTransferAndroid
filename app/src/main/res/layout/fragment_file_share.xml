@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.ScreenShareFragment"
+    tools:context=".fragments.FileShareFragment"
     android:background="@color/background">
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -17,36 +17,44 @@
                 android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:title="@string/screen_share"
+                app:title="@string/file_share"
                 app:titleTextColor="@color/white"
                 app:navigationIcon="@drawable/baseline_navigate_before_24"/>
         </com.google.android.material.appbar.AppBarLayout>
 
         <!-- Note: A RecyclerView can also be used -->
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nsv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
-            <LinearLayout
+            <!-- function buttons -->
+            <GridLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/LoadingAnimation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:lottie_rawRes="@raw/loading_spinner"
-                    app:lottie_autoPlay="true"
-                    app:lottie_loop="true"/>
+                android:layout_height="wrap_content"
+                android:columnCount="1"
+                android:rowCount="2"
+                android:paddingStart="100dp"
+                android:paddingEnd="100dp"
+                android:layout_gravity="center_vertical">
+                <com.example.wirelesstransferandroid.customviews.FunctionBtnView
+                    android:id="@+id/fileSendBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    app:function_icon="@drawable/file_send_icon"
+                    app:function_name="@string/send"
+                    android:layout_marginBottom="40dp"
+                    android:layout_gravity="fill"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/waiting_connection"
-                    android:textColor="@color/white"
-                    android:textSize="22sp"
-                    android:gravity="center_horizontal"/>
-            </LinearLayout>
+                <com.example.wirelesstransferandroid.customviews.FunctionBtnView
+                    android:id="@+id/fileReceiveBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    app:function_icon="@drawable/file_receive_icon"
+                    app:function_name="@string/receive"
+                    android:layout_marginBottom="40dp"
+                    android:layout_gravity="fill"/>
+            </GridLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </FrameLayout>

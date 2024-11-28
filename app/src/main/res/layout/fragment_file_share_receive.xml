@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.ScreenShareFragment"
+    tools:context=".fragments.FileShareReceiveFragment"
     android:background="@color/background">
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
                 android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:title="@string/screen_share"
+                app:title="@string/file_share"
                 app:titleTextColor="@color/white"
                 app:navigationIcon="@drawable/baseline_navigate_before_24"/>
         </com.google.android.material.appbar.AppBarLayout>

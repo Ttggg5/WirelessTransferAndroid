@@ -9,4 +9,9 @@
         <attr name="imgBtn_width" format="dimension" />
         <attr name="imgBtn_height" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="FileProgressTagView">
+        <attr name="file_name" format="string" />
+        <attr name="file_size" format="string" />
+    </declare-styleable>
 </resources>
