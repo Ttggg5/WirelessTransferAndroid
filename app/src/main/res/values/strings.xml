@@ -6,17 +6,24 @@
     <string name="device_ip">裝置IP:</string>
     <string name="wifi_name">Wifi名稱:</string>
 
-    <!-- functions -->
+    <!-- nav title-->
     <string name="home">首頁</string>
     <string name="screen_share">螢幕分享</string>
     <string name="file_share">檔案分享</string>
     <string name="setting">設定</string>
 
-    <string name="send">傳送</string>
-    <string name="receive">接收</string>
+    <string name="choose_file">選擇檔案</string>
+    <string name="search_device">尋找裝置</string>
 
     <string name="mirror">鏡像</string>
     <string name="extend">延伸</string>
+
+    <!-- functions-->
+    <string name="send">傳送</string>
+    <string name="receive">接收</string>
+
+    <string name="add">新增</string>
+    <string name="delete">刪除</string>
 
     <!-- qr code scanner -->
     <string name="qr_scanner_description">QR Code掃描器</string>
@@ -31,6 +38,8 @@
     <string name="transferring">傳輸中</string>
     <string name="remaining">剩下</string>
     <string name="file">個檔案</string>
+    <string name="select_file">選擇檔案</string>
+    <string name="no_file_selected">請先選擇檔案</string>
 
     <!-- dialogs -->
     <string name="confirm">確認</string>
@@ -39,6 +48,7 @@
 
     <string name="permission_warring_dialog_title">需要權限</string>
     <string name="location_permission_warring_message">必須許可位置權限，才能使用此app</string>
+    <string name="storage_permission_warring_message">必須許可所有儲存空間權限，才能使用此app</string>
 
     <string name="wifi_not_connected_dialog_title">Wifi未連接</string>
     <string name="wifi_not_connected_message">請連接Wifi，才能使用此app</string>

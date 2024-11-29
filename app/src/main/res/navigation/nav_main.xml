@@ -20,8 +20,8 @@
             android:id="@+id/action_homeFragment_to_fileShareFragment"
             app:destination="@id/fileShareFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_fileShareTransferingFragment"
-            app:destination="@id/fileShareTransferingFragment" />
+            android:id="@+id/action_homeFragment_to_fileShareTransferringReceiveFragment"
+            app:destination="@id/fileShareTransferringReceiveFragment" />
     </fragment>
     <fragment
         android:id="@+id/screenShareFragment"
@@ -48,6 +48,9 @@
         <action
             android:id="@+id/action_fileShareFragment_to_fileShareReceiveFragment"
             app:destination="@id/fileShareReceiveFragment" />
+        <action
+            android:id="@+id/action_fileShareFragment_to_fileShareSendFragment"
+            app:destination="@id/fileShareSendFragment" />
     </fragment>
     <fragment
         android:id="@+id/fileShareReceiveFragment"
@@ -55,16 +58,21 @@
         android:label="fragment_file_share_receive"
         tools:layout="@layout/fragment_file_share_receive" >
         <action
-            android:id="@+id/action_fileShareReceiveFragment_to_fileShareTransferingFragment"
-            app:destination="@id/fileShareTransferingFragment" />
+            android:id="@+id/action_fileShareReceiveFragment_to_fileShareTransferringReceiveFragment"
+            app:destination="@id/fileShareTransferringReceiveFragment" />
     </fragment>
     <fragment
-        android:id="@+id/fileShareTransferingFragment"
-        android:name="com.example.wirelesstransferandroid.fragments.FileShareTransferringFragment"
+        android:id="@+id/fileShareTransferringReceiveFragment"
+        android:name="com.example.wirelesstransferandroid.fragments.FileShareTransferringReceiveFragment"
         android:label="fragment_file_share_transfering"
-        tools:layout="@layout/fragment_file_share_transferring" >
+        tools:layout="@layout/fragment_file_share_transferring_receive" >
         <action
-            android:id="@+id/action_fileShareTransferingFragment_to_homeFragment"
+            android:id="@+id/action_fileShareTransferringReceiveFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/fileShareSendFragment"
+        android:name="com.example.wirelesstransferandroid.fragments.FileShareSendFragment"
+        android:label="fragment_file_share_send"
+        tools:layout="@layout/fragment_file_share_send" />
 </navigation>

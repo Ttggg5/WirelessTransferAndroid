@@ -30,7 +30,7 @@ class FileShareFragment : Fragment() {
 
         // function buttons
         binding.fileSendBtn.setOnClick {
-
+            requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_fileShareFragment_to_fileShareSendFragment)
         }
 
         binding.fileReceiveBtn.setOnClick {

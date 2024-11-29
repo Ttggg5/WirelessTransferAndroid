@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import com.example.wirelesstransferandroid.R
-import com.example.wirelesstransferandroid.databinding.FragmentFileShareBinding
 import com.example.wirelesstransferandroid.databinding.FragmentFileShareReceiveBinding
 import com.example.wirelesstransferandroid.internetsocket.MyTcp.Indexes
 import com.example.wirelesstransferandroid.internetsocket.MyUdp.MyUdp
@@ -60,6 +59,7 @@ class FileShareReceiveFragment : Fragment() {
                                 var dialogResult: Boolean = false
                                 requireActivity().runOnUiThread {
                                     val builder = AlertDialog.Builder(requireContext())
+                                    builder.setCancelable(false)
                                     builder.setTitle(R.string.file_share_request_dialog_title)
                                     builder.setMessage(requestCmd.deviceName + " " + resources.getString(R.string.file_share_request_message))
                                     builder.setPositiveButton(R.string.confirm) { dialogInterface, _ ->
@@ -84,7 +84,7 @@ class FileShareReceiveFragment : Fragment() {
 
                                     val bundle = bundleOf("serverIp" to myUdpListener.getSenderIP())
                                     requireActivity().runOnUiThread {
-                                        requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_fileShareReceiveFragment_to_fileShareTransferingFragment, bundle)
+                                        requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_fileShareReceiveFragment_to_fileShareTransferringReceiveFragment, bundle)
                                     }
                                 } else {
                                     myUdpListener.send(ReplyCmd(ReplyType.Refuse).Encode(), myUdpListener.getSenderIP())

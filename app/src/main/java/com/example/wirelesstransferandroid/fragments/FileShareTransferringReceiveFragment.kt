@@ -1,27 +1,20 @@
 package com.example.wirelesstransferandroid.fragments
 
-import android.content.pm.ActivityInfo
-import android.content.res.Resources
 import android.os.Bundle
 import android.provider.Settings
-import android.util.AttributeSet
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams
-import android.widget.ScrollView
 import android.widget.Toast
-import androidx.annotation.Dimension
 import androidx.core.view.children
-import androidx.core.view.marginTop
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.transition.Visibility
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.customviews.FileProgressTagView
-import com.example.wirelesstransferandroid.databinding.FragmentFileShareTransferringBinding
+import com.example.wirelesstransferandroid.databinding.FragmentFileShareTransferringReceiveBinding
 import com.example.wirelesstransferandroid.internetsocket.MyTcp.MyTcpClient
 import com.example.wirelesstransferandroid.internetsocket.MyTcp.MyTcpClientState
 import com.example.wirelesstransferandroid.internetsocket.cmd.CmdType
@@ -33,11 +26,10 @@ import com.example.wirelesstransferandroid.internetsocket.cmd.RequestCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestType
 import com.example.wirelesstransferandroid.tools.InternetInfo
 import kotlinx.coroutines.launch
-import java.util.jar.Attributes
 
-class FileShareTransferringFragment : Fragment() {
+class FileShareTransferringReceiveFragment : Fragment() {
 
-    private lateinit var binding: FragmentFileShareTransferringBinding
+    private lateinit var binding: FragmentFileShareTransferringReceiveBinding
 
     lateinit var myTcpClient: MyTcpClient
 
@@ -47,7 +39,7 @@ class FileShareTransferringFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentFileShareTransferringBinding.inflate(inflater, container, false)
+        binding = FragmentFileShareTransferringReceiveBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -64,11 +56,11 @@ class FileShareTransferringFragment : Fragment() {
             }
 
             if (fileLeft == 0)
-                requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_fileShareTransferingFragment_to_homeFragment)
+                requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_fileShareTransferringReceiveFragment_to_homeFragment)
         }
 
         binding.returnHomeBtn.setOnClickListener {
-            requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_fileShareTransferingFragment_to_homeFragment)
+            requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_fileShareTransferringReceiveFragment_to_homeFragment)
         }
 
         myTcpClient = MyTcpClient(
@@ -88,7 +80,7 @@ class FileShareTransferringFragment : Fragment() {
             if (fileLeft == 0) return@setOnDisconnected
 
             requireActivity().runOnUiThread {
-                requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_fileShareTransferingFragment_to_homeFragment)
+                requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_fileShareTransferringReceiveFragment_to_homeFragment)
 
                 val toast = Toast(requireContext())
                 toast.setText(R.string.disconnected_from_pc)
@@ -105,7 +97,7 @@ class FileShareTransferringFragment : Fragment() {
                         fptv.setFileSize(fic.fileSize)
 
                         val layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 400)
-                        layoutParams.setMargins(50, 80, 80, 50)
+                        layoutParams.setMargins(50, 80, 50, 80)
                         fptv.layoutParams = layoutParams
 
                         fptv.setOnCompleted {

@@ -66,6 +66,7 @@ class ScreenShareFragment : Fragment() {
                                 var dialogResult: Boolean = false
                                 requireActivity().runOnUiThread {
                                     val builder = AlertDialog.Builder(requireContext())
+                                    builder.setCancelable(false)
                                     builder.setTitle(R.string.screen_share_request_dialog_title)
                                     builder.setMessage(requestCmd.deviceName + " " + resources.getString(R.string.screen_share_request_message))
                                     builder.setPositiveButton(R.string.confirm) { dialogInterface, _ ->

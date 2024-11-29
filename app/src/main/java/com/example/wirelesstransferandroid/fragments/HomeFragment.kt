@@ -2,8 +2,10 @@ package com.example.wirelesstransferandroid.fragments
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.databinding.FragmentHomeBinding
 import com.example.wirelesstransferandroid.internetsocket.MyTcp.Indexes
@@ -28,7 +29,6 @@ import com.example.wirelesstransferandroid.tools.InternetInfo
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
-import kotlinx.coroutines.delay
 
 
 class HomeFragment : Fragment() {
@@ -81,7 +81,7 @@ class HomeFragment : Fragment() {
                         }
                         else if (content[0] == FUNCTION_FILE_SHARE) {
                             val bundle = bundleOf("serverIp" to content[1])
-                            requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_to_fileShareTransferingFragment, bundle)
+                            requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_to_fileShareTransferringReceiveFragment, bundle)
                         }
                     }
                 }
@@ -148,6 +148,25 @@ class HomeFragment : Fragment() {
                 else -> false
             }
         }
+
+        if (!Environment.isExternalStorageManager()) {
+            val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+            builder.setCancelable(false)
+            builder.setTitle(R.string.permission_warring_dialog_title)
+            builder.setMessage(R.string.storage_permission_warring_message)
+            builder.setPositiveButton(R.string.confirm) { dialogInterface, _ ->
+                dialogInterface.dismiss()
+
+                val permissionIntent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                startActivity(permissionIntent)
+            }
+            builder.setNegativeButton(R.string.cancel) { dialogInterface, _ ->
+                dialogInterface.dismiss()
+
+                requireActivity().finish()
+            }
+            builder.create().show()
+        }
     }
 
     @Deprecated("Deprecated in Java")
@@ -155,10 +174,11 @@ class HomeFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty()) {
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     binding.wifiNameTv.text = InternetInfo.getSSID(requireContext())
                 } else {
                     val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                    builder.setCancelable(false)
                     builder.setTitle(R.string.permission_warring_dialog_title)
                     builder.setMessage(R.string.location_permission_warring_message)
                     builder.setPositiveButton(R.string.confirm) { dialogInterface, _ ->

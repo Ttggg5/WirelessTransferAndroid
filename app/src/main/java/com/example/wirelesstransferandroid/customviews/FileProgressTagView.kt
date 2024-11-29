@@ -11,11 +11,17 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.airbnb.lottie.LottieAnimationView
+import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.tools.FileInfoPresenter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pl.droidsonroids.gif.GifImageView
 import java.io.File
+import java.io.FileNotFoundException
 
 enum class FileShareTagState
 {
@@ -25,12 +31,14 @@ enum class FileShareTagState
 }
 
 class FileProgressTagView: ConstraintLayout {
+    companion object {
+        const val MAX_LENGTH = 24
+    }
+
     private var onCompleted: () -> Unit = {}
     fun setOnCompleted(block: () -> Unit) {
         onCompleted = block
     }
-
-    val MAX_LENGTH = 24
 
     var state = FileShareTagState.Waiting
     var originalFileName = ""
@@ -126,7 +134,7 @@ class FileProgressTagView: ConstraintLayout {
             count++
         }
 
-        return result;
+        return result
     }
 
     fun setFileName(name: String) {
@@ -149,23 +157,29 @@ class FileProgressTagView: ConstraintLayout {
         fileSizeTV.text = FileInfoPresenter.getFileSizePresent(fullFileSize)
     }
 
-    fun writeDataToFile(data: ByteArray) {
+    fun updateProgress(size: Long) {
         if (state == FileShareTagState.Waiting) {
             state = FileShareTagState.Processing
-            stateAnimation.setImageDrawable(resources.getDrawable(R.drawable.loading_animation))
+            stateAnimation.setImageDrawable(pl.droidsonroids.gif.GifDrawable(resources, R.drawable.loading_animation))
         }
 
-        Thread {
-            file.appendBytes(data)
-        }.start()
-
-        curFileSize += data.size
+        curFileSize += size
         progressBar.setProgress(((curFileSize.toFloat() / fullFileSize.toFloat()) * 100.0).toInt(), true)
 
         if (curFileSize == fullFileSize) {
             state = FileShareTagState.Complete
             stateAnimation.setImageDrawable(resources.getDrawable(R.drawable.complete_icon))
             onCompleted.invoke()
+        }
+    }
+
+    fun writeDataToFile(data: ByteArray) {
+        CoroutineScope(Dispatchers.Main).launch {
+            withContext(Dispatchers.IO) {
+                file.appendBytes(data)
+            }
+
+            updateProgress(data.size.toLong())
         }
     }
 }

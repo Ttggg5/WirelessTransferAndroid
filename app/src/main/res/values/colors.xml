@@ -12,4 +12,5 @@
     <color name="background">#FF313131</color>
 
     <color name="cancel">#FFCD5C5C</color>
+    <color name="cancel_pressed">#E97C7C</color>
 </resources>

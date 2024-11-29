@@ -1,24 +1,14 @@
 package com.example.wirelesstransferandroid
 
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
 import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.findFragment
 import androidx.navigation.findNavController
-import com.example.wirelesstransferandroid.databinding.FragmentHomeBinding
 import com.example.wirelesstransferandroid.fragments.DisplayScreenFragment
-import com.example.wirelesstransferandroid.fragments.HomeFragment
 
 class MainActivity : AppCompatActivity() {
     lateinit var fragmentContainerView: FragmentContainerView
@@ -43,7 +33,7 @@ class MainActivity : AppCompatActivity() {
                 val dsf = supportFragmentManager.findFragmentById(fragmentContainerView.id)?.childFragmentManager?.fragments[0] as DisplayScreenFragment
                 return dsf.onKeyUp(keyCode, event)
             }
-            else if (fragment?.id == R.id.fileShareTransferingFragment) return true
+            else if (fragment?.id == R.id.fileShareTransferringReceiveFragment) return true
         } catch (ex: Exception) {
 
         }
