@@ -40,6 +40,8 @@
     <string name="file">個檔案</string>
     <string name="select_file">選擇檔案</string>
     <string name="no_file_selected">請先選擇檔案</string>
+    <string name="refuse_connect">對方已拒絕連接!</string>
+    <string name="request_timeout">請求超時!</string>
 
     <!-- dialogs -->
     <string name="confirm">確認</string>

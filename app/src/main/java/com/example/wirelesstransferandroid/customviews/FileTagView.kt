@@ -6,13 +6,10 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.tools.FileInfoPresenter
-import pl.droidsonroids.gif.GifImageView
-import java.io.File
 
 class FileTagView: ConstraintLayout {
     companion object {
@@ -111,7 +108,7 @@ class FileTagView: ConstraintLayout {
         fileSizeTV.text = FileInfoPresenter.getFileSizePresent(fullFileSize)
     }
 
-    fun setUri(uri: Uri) {
+    fun setUri(uri: Uri?) {
         this.uri = uri
     }
 }

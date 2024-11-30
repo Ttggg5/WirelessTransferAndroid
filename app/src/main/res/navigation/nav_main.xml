@@ -74,5 +74,18 @@
         android:id="@+id/fileShareSendFragment"
         android:name="com.example.wirelesstransferandroid.fragments.FileShareSendFragment"
         android:label="fragment_file_share_send"
-        tools:layout="@layout/fragment_file_share_send" />
+        tools:layout="@layout/fragment_file_share_send" >
+        <action
+            android:id="@+id/action_fileShareSendFragment_to_fileShareTransferringSendFragment"
+            app:destination="@id/fileShareTransferringSendFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fileShareTransferringSendFragment"
+        android:name="com.example.wirelesstransferandroid.fragments.FileShareTransferringSendFragment"
+        android:label="fragment_file_share_transferring_send"
+        tools:layout="@layout/fragment_file_share_transferring_send" >
+        <action
+            android:id="@+id/action_fileShareTransferringSendFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>

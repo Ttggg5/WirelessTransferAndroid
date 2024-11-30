@@ -1,7 +1,6 @@
 package com.example.wirelesstransferandroid.internetsocket.cmd
 
-import android.util.Xml.Encoding
-import com.example.wirelesstransferandroid.internetsocket.MyTcp.Indexes
+import com.example.wirelesstransferandroid.internetsocket.Indexes
 
 
 class CmdDecoder {

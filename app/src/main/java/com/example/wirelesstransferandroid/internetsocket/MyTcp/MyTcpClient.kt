@@ -1,33 +1,16 @@
 package com.example.wirelesstransferandroid.internetsocket.MyTcp
 
-import android.os.Handler
+import com.example.wirelesstransferandroid.internetsocket.Indexes
 import com.example.wirelesstransferandroid.internetsocket.cmd.ClientInfoCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.Cmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.CmdDecoder
-import com.example.wirelesstransferandroid.internetsocket.cmd.RequestCmd
-import com.example.wirelesstransferandroid.internetsocket.cmd.RequestType
-import com.example.wirelesstransferandroid.tools.InternetInfo
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.DataInputStream
-import java.io.DataOutputStream
-import java.io.IOException
 import java.io.InputStream
-import java.io.InputStreamReader
 import java.io.OutputStream
-import java.io.OutputStreamWriter
-import java.io.PrintWriter
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.net.SocketAddress
-import java.util.ArrayDeque
-import javax.net.SocketFactory
+import java.net.SocketTimeoutException
 
 
 enum class MyTcpClientState {
@@ -35,8 +18,6 @@ enum class MyTcpClientState {
     Connected,
     Disconnected,
 }
-
-class Indexes(var startIndex: Int = 0, var endIndex: Int = 0)
 
 class MyTcpClient(val clientIp: String, val serverIp: String, val port: Int, clientName: String) {
     private var onConnected: () -> Unit = {}
@@ -77,50 +58,61 @@ class MyTcpClient(val clientIp: String, val serverIp: String, val port: Int, cli
         if (state == MyTcpClientState.Disconnected) {
             state = MyTcpClientState.Waiting
 
-            val thread = Thread(runConnect())
-            thread.start()
+            Thread(runConnect).start()
         }
     }
 
-    fun runConnect() = Runnable {
-        try {
-            client = Socket()
-            client.connect(InetSocketAddress(serverIp, port), 1000)
-            reader = client.getInputStream()
-            writer = client.getOutputStream()
-
-            // send ClientInfo
-            val clientInfoCmd = ClientInfoCmd(clientName, clientIp)
-            writer.write(clientInfoCmd.Encode())
-            writer.flush()
-
-            state = MyTcpClientState.Connected
-            onConnected.invoke()
-
-            // start reader
-            while (true) {
-                var actualSize = reader.read(buffer, indexes.endIndex, buffer.size - indexes.endIndex)
-                if (actualSize > 0) {
-                    indexes.endIndex += actualSize
-                    if (indexes.endIndex >= buffer.size)
-                        indexes.endIndex -= buffer.size
-
-                    // prevent it doesn't only read one cmd
-                    while (true) {
-                        val cmd: Cmd? = CmdDecoder.DecodeCmd(buffer, indexes)
-                        if (cmd != null) {
-                            onReceivedCmd.invoke(cmd)
-                            continue
-                        }
+    private val runConnect = Runnable {
+        while (state == MyTcpClientState.Waiting) {
+            try {
+                var count = 0
+                while (true){
+                    try {
+                        client = Socket()
+                        client.connect(InetSocketAddress(serverIp, port))
                         break
+                    } catch (ex: Exception) {
+                        if (count++ == 50)
+                            throw Exception("no server found")
+                        Thread.sleep(100)
                     }
                 }
-            }
-        } catch (ex: Exception) {
-            if (state != MyTcpClientState.Disconnected) {
-                state = MyTcpClientState.Disconnected
-                client?.close()
-                onDisconnected.invoke()
+                reader = client.getInputStream()
+                writer = client.getOutputStream()
+
+                // send ClientInfo
+                val clientInfoCmd = ClientInfoCmd(clientName, clientIp)
+                writer.write(clientInfoCmd.Encode())
+                writer.flush()
+
+                state = MyTcpClientState.Connected
+                onConnected.invoke()
+
+                // start reader
+                while (true) {
+                    var actualSize = reader.read(buffer, indexes.endIndex, buffer.size - indexes.endIndex)
+                    if (actualSize > 0) {
+                        indexes.endIndex += actualSize
+                        if (indexes.endIndex >= buffer.size)
+                            indexes.endIndex -= buffer.size
+
+                        // prevent it doesn't only read one cmd
+                        while (true) {
+                            val cmd: Cmd? = CmdDecoder.DecodeCmd(buffer, indexes)
+                            if (cmd != null) {
+                                onReceivedCmd.invoke(cmd)
+                                continue
+                            }
+                            break
+                        }
+                    }
+                }
+            } catch (ex: Exception) {
+                if (state != MyTcpClientState.Disconnected) {
+                    state = MyTcpClientState.Disconnected
+                    client?.close()
+                    onDisconnected.invoke()
+                }
             }
         }
     }

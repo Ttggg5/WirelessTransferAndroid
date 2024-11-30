@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.databinding.FragmentHomeBinding
-import com.example.wirelesstransferandroid.internetsocket.MyTcp.Indexes
+import com.example.wirelesstransferandroid.internetsocket.Indexes
 import com.example.wirelesstransferandroid.internetsocket.MyUdp.MyUdp
 import com.example.wirelesstransferandroid.internetsocket.cmd.CmdDecoder
 import com.example.wirelesstransferandroid.internetsocket.cmd.CmdType

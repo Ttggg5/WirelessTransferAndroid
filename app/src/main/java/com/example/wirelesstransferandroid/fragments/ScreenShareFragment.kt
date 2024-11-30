@@ -1,10 +1,7 @@
 package com.example.wirelesstransferandroid.fragments
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -12,14 +9,11 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.databinding.FragmentScreenShareBinding
-import com.example.wirelesstransferandroid.internetsocket.MyTcp.Indexes
-import com.example.wirelesstransferandroid.internetsocket.MyTcp.MyTcpClient
+import com.example.wirelesstransferandroid.internetsocket.Indexes
 import com.example.wirelesstransferandroid.internetsocket.MyUdp.MyUdp
 import com.example.wirelesstransferandroid.internetsocket.cmd.ClientInfoCmd
-import com.example.wirelesstransferandroid.internetsocket.cmd.Cmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.CmdDecoder
 import com.example.wirelesstransferandroid.internetsocket.cmd.CmdType
 import com.example.wirelesstransferandroid.internetsocket.cmd.ReplyCmd

@@ -9,6 +9,13 @@ import java.net.SocketAddress
 
 class MyUdp(private var port: Int) {
     private var listenSocket = DatagramSocket(port)
+    var broadcast: Boolean
+        get() = listenSocket.broadcast
+        set(value) = listenSocket.setBroadcast(value)
+
+    var timeOut: Int
+        get() = listenSocket.soTimeout
+        set(value) = listenSocket.setSoTimeout(value)
 
     private lateinit var listenPacket : DatagramPacket
     private lateinit var sendPacket : DatagramPacket

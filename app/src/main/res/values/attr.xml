@@ -14,4 +14,9 @@
         <attr name="file_name" format="string" />
         <attr name="file_size" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="DeviceTagView">
+        <attr name="device_name" format="string" />
+        <attr name="device_ip" format="string" />
+    </declare-styleable>
 </resources>

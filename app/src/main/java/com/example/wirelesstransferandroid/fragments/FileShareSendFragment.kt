@@ -2,10 +2,8 @@ package com.example.wirelesstransferandroid.fragments
 
 import android.app.Activity
 import android.content.Intent
-import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
-import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.OpenableColumns
 import androidx.fragment.app.Fragment
@@ -18,16 +16,11 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.view.children
-import androidx.fragment.app.setFragmentResult
 import androidx.navigation.findNavController
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.customviews.FileTagView
 import com.example.wirelesstransferandroid.databinding.FragmentFileShareSendBinding
-import com.example.wirelesstransferandroid.tools.FileInfoPresenter
 import com.example.wirelesstransferandroid.tools.IntToDp.dp
-import java.io.File
-import java.io.FileDescriptor
-import java.io.FileInputStream
 import java.util.ArrayList
 
 class FileShareSendFragment : Fragment() {
@@ -120,13 +113,6 @@ class FileShareSendFragment : Fragment() {
                     }
                 }
             }
-
-            /*
-            val pfd = requireContext().contentResolver.openFileDescriptor(uri, "r")
-            if (pfd != null){
-                val fd = pfd.fileDescriptor
-                val fileStream = FileInputStream(fd)
-            */
         }
     }
 
@@ -159,7 +145,18 @@ class FileShareSendFragment : Fragment() {
         val dialog = SearchDeviceDialogFragment()
         dialog.isCancelable = false
         dialog.setOnDeviceChose {
+            dialog.dismiss()
 
+            requireActivity().runOnUiThread {
+                val fileUriList = ArrayList<Uri?>()
+                for (v in binding.mainLL.children) {
+                    val ftv = v as FileTagView
+                    fileUriList.add(ftv.uri)
+                }
+
+                val bundle = bundleOf("fileUriList" to fileUriList)
+                requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_fileShareSendFragment_to_fileShareTransferringSendFragment, bundle)
+            }
         }
         dialog.show(childFragmentManager, SearchDeviceDialogFragment.TAG)
     }

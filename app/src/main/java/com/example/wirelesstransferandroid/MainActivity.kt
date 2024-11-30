@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
                 return dsf.onKeyUp(keyCode, event)
             }
             else if (fragment?.id == R.id.fileShareTransferringReceiveFragment) return true
+            else if (fragment?.id == R.id.fileShareTransferringSendFragment) return true
         } catch (ex: Exception) {
 
         }
