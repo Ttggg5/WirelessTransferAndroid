@@ -25,6 +25,7 @@ import com.example.wirelesstransferandroid.internetsocket.cmd.ReplyType
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestType
 import com.example.wirelesstransferandroid.tools.InternetInfo
+import com.example.wirelesstransferandroid.tools.NotificationSender
 import kotlinx.coroutines.launch
 
 class FileShareTransferringReceiveFragment : Fragment() {
@@ -107,6 +108,8 @@ class FileShareTransferringReceiveFragment : Fragment() {
                                     binding.returnHomeBtn.visibility = View.VISIBLE
                                 }
                                 binding.fileLeftTV.text = fileLeft.toString()
+
+                                NotificationSender.sendNotification(requireContext(), "FileShare", resources.getString(R.string.download_complete), NotificationSender.fileShareChannel)
                             }
                         }
 

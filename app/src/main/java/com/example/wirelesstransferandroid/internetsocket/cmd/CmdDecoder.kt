@@ -81,14 +81,13 @@ class CmdDecoder {
                     return null
                 }
 
-                if (tmpBuffer[curIndex] == endSymbol)
-                {
+                if (tmpBuffer[curIndex] == endSymbol) {
                     // create cmd class
                     var data = tmpBuffer.sliceArray(previousIndex..<previousIndex + dataLength)
                     cmd = CreateDecodeCmd(cmdType, data)
 
                     indexes.startIndex += curIndex + cmdStr.length + 2
-                    if (indexes.startIndex >= buffer.size)
+                    if (indexes.startIndex > buffer.size)
                         indexes.startIndex -= buffer.size
 
                     return cmd

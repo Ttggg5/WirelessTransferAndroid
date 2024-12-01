@@ -25,9 +25,10 @@
     <string name="add">新增</string>
     <string name="delete">刪除</string>
 
-    <!-- qr code scanner -->
+    <!-- qr code -->
     <string name="qr_scanner_description">QR Code掃描器</string>
     <string name="qr_scanner_prompt">請掃描PC端的QR Code</string>
+    <string name="qr_description">顯示QR Code</string>
 
     <!-- hint -->
     <string name="waiting_connection">等待連接中</string>
@@ -42,6 +43,8 @@
     <string name="no_file_selected">請先選擇檔案</string>
     <string name="refuse_connect">對方已拒絕連接!</string>
     <string name="request_timeout">請求超時!</string>
+    <string name="download_complete">你的檔案都已下載完成</string>
+    <string name="send_complete">你的檔案都已傳送完成</string>
 
     <!-- dialogs -->
     <string name="confirm">確認</string>

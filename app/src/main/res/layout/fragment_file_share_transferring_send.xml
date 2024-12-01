@@ -90,6 +90,8 @@
         android:layout_marginBottom="10dp"
         android:layout_gravity="bottom|center_horizontal"
         android:backgroundTint="@color/cancel"
+        app:rippleColor="@color/cancel_pressed"
+        android:textColor="@color/white"
         android:elevation="20dp"
         android:text="@string/cancel"/>
 
@@ -102,6 +104,8 @@
         android:layout_marginBottom="10dp"
         android:layout_gravity="bottom|center_horizontal"
         android:backgroundTint="@color/main"
+        app:rippleColor="@color/main_pressed"
+        android:textColor="@color/white"
         android:elevation="20dp"
         android:text="@string/return_home"
         android:visibility="gone"/>

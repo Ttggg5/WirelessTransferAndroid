@@ -69,7 +69,7 @@ dependencies {
     // Testing Navigation
     androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
 
-    // QR code scanner
+    // QR code scanner & encoder
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
     // loading animation

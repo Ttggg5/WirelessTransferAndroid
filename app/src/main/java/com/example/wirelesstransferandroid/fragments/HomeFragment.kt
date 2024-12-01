@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
@@ -33,6 +34,7 @@ import com.journeyapps.barcodescanner.ScanOptions
 
 class HomeFragment : Fragment() {
     companion object {
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 0
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
 
         private const val FUNCTION_MIRROR = "Mirror"
@@ -60,30 +62,52 @@ class HomeFragment : Fragment() {
                 return@registerForActivityResult
             }
 
+            binding.waitingMask.visibility = View.VISIBLE
+
             // send request and navigate to destination
             val rc = RequestCmd(RequestType.QRConnect, Settings.Global.getString(context?.contentResolver, "device_name"))
             Thread {
                 val myUdp = MyUdp(resources.getInteger(R.integer.udp_port))
                 myUdp.send(rc.Encode(), content[1])
 
-                var recvBuffer = myUdp.receive()
-                val indexes = Indexes(0, recvBuffer.size - 1)
-                var cmd = CmdDecoder.DecodeCmd(recvBuffer, indexes)
+                var count = 0
+                while (true) {
+                    if (count++ > 20) break
 
-                if (cmd != null && cmd.cmdType == CmdType.Request) {
-                    myUdp.send(ReplyCmd(ReplyType.Accept).Encode(), content[1])
-                    myUdp.close()
+                    var recvBuffer = myUdp.receive()
+                    val indexes = Indexes(0, recvBuffer.size)
+                    var cmd = CmdDecoder.DecodeCmd(recvBuffer, indexes)
 
-                    requireActivity().runOnUiThread {
-                        if (content[0] == FUNCTION_MIRROR || content[0] == FUNCTION_EXTEND) {
-                            val bundle = bundleOf("serverIp" to content[1])
-                            requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_to_displayScreenFragment, bundle)
-                        }
-                        else if (content[0] == FUNCTION_FILE_SHARE) {
-                            val bundle = bundleOf("serverIp" to content[1])
-                            requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_to_fileShareTransferringReceiveFragment, bundle)
+                    if (cmd != null) {
+                        if (cmd.cmdType == CmdType.Request){
+                            if ((cmd as RequestCmd).requestType == RequestType.FileShare ||
+                                (cmd as RequestCmd).requestType == RequestType.Mirror ||
+                                (cmd as RequestCmd).requestType == RequestType.Extend){
+                                myUdp.send(ReplyCmd(ReplyType.Accept).Encode(), content[1])
+                                myUdp.close()
+
+                                requireActivity().runOnUiThread {
+                                    if (content[0] == FUNCTION_MIRROR || content[0] == FUNCTION_EXTEND) {
+                                        val bundle = bundleOf("serverIp" to content[1])
+                                        requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_to_displayScreenFragment, bundle)
+                                    }
+                                    else if (content[0] == FUNCTION_FILE_SHARE) {
+                                        val bundle = bundleOf("serverIp" to content[1])
+                                        requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_homeFragment_to_fileShareTransferringReceiveFragment, bundle)
+                                    }
+                                }
+                                break
+                            }
                         }
                     }
+                    else {
+                        myUdp.close()
+                        break
+                    }
+                }
+
+                requireActivity().runOnUiThread {
+                    binding.waitingMask.visibility = View.GONE
                 }
             }.start()
         }
@@ -103,9 +127,8 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // request location permission
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
-        }
 
         // init device information
         binding.deviceNameTv.text = Settings.Global.getString(context?.contentResolver, "device_name")
@@ -115,6 +138,7 @@ class HomeFragment : Fragment() {
         // check is connected to wifi
         if (binding.deviceIpTv.text.equals("0.0.0.0")) {
             val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+            builder.setCancelable(false)
             builder.setTitle(R.string.wifi_not_connected_dialog_title)
             builder.setMessage(R.string.wifi_not_connected_message)
             builder.setPositiveButton(R.string.confirm) { dialogInterface, _ ->
@@ -149,6 +173,7 @@ class HomeFragment : Fragment() {
             }
         }
 
+        // get storage permission
         if (!Environment.isExternalStorageManager()) {
             val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
             builder.setCancelable(false)
@@ -166,6 +191,18 @@ class HomeFragment : Fragment() {
                 requireActivity().finish()
             }
             builder.create().show()
+        }
+
+        askNotificationPermission()
+    }
+
+    private fun askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED
+            )
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), NOTIFICATION_PERMISSION_REQUEST_CODE)
         }
     }
 

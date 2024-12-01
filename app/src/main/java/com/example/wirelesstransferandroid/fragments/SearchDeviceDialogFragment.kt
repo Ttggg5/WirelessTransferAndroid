@@ -1,5 +1,6 @@
 package com.example.wirelesstransferandroid.fragments
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -23,6 +24,10 @@ import com.example.wirelesstransferandroid.internetsocket.cmd.ReplyType
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestType
 import com.example.wirelesstransferandroid.tools.IntToDp.dp
+import com.example.wirelesstransferandroid.tools.InternetInfo
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.WriterException
+import com.journeyapps.barcodescanner.BarcodeEncoder
 import kotlinx.coroutines.Runnable
 import pl.droidsonroids.gif.GifDrawable
 import java.net.SocketTimeoutException
@@ -69,6 +74,15 @@ class SearchDeviceDialogFragment: DialogFragment() {
             dialog?.dismiss()
         }
 
+        binding.qrBtn.setOnClickListener {
+            if (binding.qrMask.visibility == View.VISIBLE)
+                binding.qrMask.visibility = View.GONE
+            else
+                binding.qrMask.visibility = View.VISIBLE
+        }
+
+        binding.qrIV.setImageBitmap(generateQRCode("FileShare " + InternetInfo.getPhoneIp(requireContext())))
+
         startSearching()
     }
 
@@ -95,47 +109,53 @@ class SearchDeviceDialogFragment: DialogFragment() {
                 var receiveBuffer = searchClient?.receive()
                 receiveBuffer?.size?.let {
                     if (it > 0) {
-                        val cmd = CmdDecoder.DecodeCmd(receiveBuffer, Indexes(0, receiveBuffer.size - 1))
-                        if (cmd != null) {
-                            when(cmd.cmdType) {
-                                CmdType.ClientInfo -> {
-                                    val cic = cmd as ClientInfoCmd
-                                    var found = false
-                                    requireActivity().runOnUiThread {
-                                        for (v in binding.mainLL.children) {
-                                            val dtv = v as DeviceTagView
-                                            if (dtv.ip == cic.ip) {
-                                                found = true
-                                                dtv.foundTime = Date().time
-                                                break
+                        val indexes = Indexes(0, it)
+                        while (true){
+                            var cmd = CmdDecoder.DecodeCmd(receiveBuffer, indexes)
+                            if (cmd != null) {
+                                when(cmd.cmdType) {
+                                    CmdType.ClientInfo -> {
+                                        val cic = cmd as ClientInfoCmd
+                                        var found = false
+                                        requireActivity().runOnUiThread {
+                                            for (v in binding.mainLL.children) {
+                                                val dtv = v as DeviceTagView
+                                                if (dtv.ip == cic.ip) {
+                                                    found = true
+                                                    dtv.foundTime = Date().time
+                                                    break
+                                                }
+                                            }
+                                            if (!found) {
+                                                val deviceTagView = DeviceTagView(binding.mainLL.context)
+                                                deviceTagView.setDeviceName(cic.clientName)
+                                                deviceTagView.setDeviceIp(cic.ip)
+
+                                                val layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 80.dp)
+                                                layoutParams.setMargins(10.dp, 0.dp, 10.dp, 10.dp)
+                                                deviceTagView.layoutParams = layoutParams
+
+                                                deviceTagView.setOnClick { onDeviceTagViewClick(it) }
+
+                                                binding.mainLL.addView(deviceTagView)
                                             }
                                         }
-                                        if (!found) {
-                                            val deviceTagView = DeviceTagView(binding.mainLL.context)
-                                            deviceTagView.setDeviceName(cic.clientName)
-                                            deviceTagView.setDeviceIp(cic.ip)
-
-                                            val layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 80.dp)
-                                            layoutParams.setMargins(10.dp, 0.dp, 10.dp, 10.dp)
-                                            deviceTagView.layoutParams = layoutParams
-
-                                            deviceTagView.setOnClick { onDeviceTagViewClick(it) }
-
-                                            binding.mainLL.addView(deviceTagView)
+                                    }
+                                    CmdType.Request -> {
+                                        val rc = cmd as RequestCmd
+                                        if (rc.requestType == RequestType.QRConnect) {
+                                            val senderIp = searchClient?.getSenderIP()
+                                            requireActivity().runOnUiThread {
+                                                val tmp = DeviceTagView(requireContext())
+                                                tmp.setDeviceIp(senderIp!!)
+                                                onDeviceTagViewClick(tmp)
+                                            }
                                         }
                                     }
+                                    else -> {}
                                 }
-                                CmdType.Request -> {
-                                    val rc = cmd as RequestCmd
-                                    if (rc.requestType == RequestType.QRConnect) {
-                                        val senderIp = searchClient?.getSenderIP()
-                                        requireActivity().runOnUiThread {
-                                            onDeviceChose.invoke(senderIp!!)
-                                        }
-                                    }
-                                }
-                                else -> {}
                             }
+                            else break
                         }
                     }
                 }
@@ -229,6 +249,21 @@ class SearchDeviceDialogFragment: DialogFragment() {
         if (searchClient != null) {
             searchClient?.close()
             state = DeviceFinderState.Stopped
+        }
+    }
+
+    private fun generateQRCode(text: String): Bitmap? {
+        val barcodeEncoder = BarcodeEncoder()
+        try {
+            // This method returns a Bitmap image of the
+            // encoded text with a height and width of 400
+            // pixels.
+            val bitmap = barcodeEncoder.encodeBitmap(text, BarcodeFormat.QR_CODE, 400, 400)
+            return bitmap
+        }
+        catch (ex: WriterException) {
+            ex.printStackTrace()
+            return null
         }
     }
 

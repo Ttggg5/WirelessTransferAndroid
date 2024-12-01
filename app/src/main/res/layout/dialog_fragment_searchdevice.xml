@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/round_block">
+    android:background="@drawable/round_block"
+    android:backgroundTint="@color/background">
 
     <Button
         android:id="@+id/cancelBtn"
@@ -16,8 +17,20 @@
         android:layout_marginStart="10dp"
         android:text="@string/cancel"
         android:textColor="@color/cancel"
-        android:backgroundTint="@color/main2"
-        app:rippleColor="@color/main2_pressed"/>
+        android:backgroundTint="@color/background"
+        app:rippleColor="@color/main2"/>
+
+    <ImageButton
+        android:id="@+id/qrBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/baseline_qr_code_24"
+        android:backgroundTint="@color/background"
+        android:contentDescription="@string/qr_description"/>
 
     <TextView
         android:id="@+id/textView"
@@ -69,6 +82,30 @@
             android:src="@drawable/loading_animation"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/qrMask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/round_block"
+            android:backgroundTint="#B3000000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone">
+            <ImageView
+                android:id="@+id/qrIV"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/round_block"
+                android:backgroundTint="@color/white"
+                android:scaleType="fitCenter"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

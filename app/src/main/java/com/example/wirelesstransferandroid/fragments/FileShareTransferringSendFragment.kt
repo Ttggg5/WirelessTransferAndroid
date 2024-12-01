@@ -1,5 +1,8 @@
 package com.example.wirelesstransferandroid.fragments
 
+import android.app.Notification
+import android.app.NotificationManager
+import android.content.Context.NOTIFICATION_SERVICE
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
@@ -14,10 +17,8 @@ import android.widget.Toast
 import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import com.bumptech.glide.request.Request
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.customviews.FileProgressTagView
-import com.example.wirelesstransferandroid.customviews.FileTagView
 import com.example.wirelesstransferandroid.databinding.FragmentFileShareTransferringSendBinding
 import com.example.wirelesstransferandroid.internetsocket.MyTcp.MyTcpClientInfo
 import com.example.wirelesstransferandroid.internetsocket.MyTcp.MyTcpServer
@@ -29,10 +30,10 @@ import com.example.wirelesstransferandroid.internetsocket.cmd.ReplyCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.ReplyType
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestType
+import com.example.wirelesstransferandroid.tools.NotificationSender
 import com.example.wirelesstransferandroid.tools.InternetInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.FileInputStream
 
 class FileShareTransferringSendFragment : Fragment() {
 
@@ -105,6 +106,8 @@ class FileShareTransferringSendFragment : Fragment() {
                             fileLeft--
                             if (fileLeft == 0) {
                                 binding.returnHomeBtn.visibility = View.VISIBLE
+
+                                NotificationSender.sendNotification(requireContext(), "FileShare", resources.getString(R.string.send_complete), NotificationSender.fileShareChannel)
                             }
                             binding.fileLeftTV.text = fileLeft.toString()
                         }
