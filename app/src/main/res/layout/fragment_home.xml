@@ -66,6 +66,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/deviceIpLL"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
@@ -86,6 +87,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/wifiNameLL"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
@@ -104,6 +106,15 @@
                             android:textColor="@color/white"
                             android:layout_marginStart="5dp"/>
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/hotspotTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/using_wifi_hotspot"
+                        android:textColor="@color/main"
+                        android:textSize="18sp"
+                        android:visibility="gone"/>
                 </LinearLayout>
 
                 <!-- function buttons -->

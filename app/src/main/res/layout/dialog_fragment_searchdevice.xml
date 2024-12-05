@@ -104,7 +104,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:background="@drawable/round_block"
                 android:backgroundTint="@color/white"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:padding="5dp"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

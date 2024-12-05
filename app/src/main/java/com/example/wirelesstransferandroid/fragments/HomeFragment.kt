@@ -30,6 +30,7 @@ import com.example.wirelesstransferandroid.tools.InternetInfo
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
+import kotlin.text.Regex
 
 
 class HomeFragment : Fragment() {
@@ -57,7 +58,7 @@ class HomeFragment : Fragment() {
                 return@registerForActivityResult
             }
 
-            if (content[1].substring(0..7) != "192.168.") {
+            if (!content[1].matches(Regex("(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])"))) {
                 Toast.makeText(requireContext(), resources.getString(R.string.incorrect_format), Toast.LENGTH_SHORT).show()
                 return@registerForActivityResult
             }
@@ -132,11 +133,18 @@ class HomeFragment : Fragment() {
 
         // init device information
         binding.deviceNameTv.text = Settings.Global.getString(context?.contentResolver, "device_name")
-        binding.deviceIpTv.text = InternetInfo.getPhoneIp(requireContext())
-        binding.wifiNameTv.text = InternetInfo.getSSID(requireContext())
 
-        // check is connected to wifi
-        if (binding.deviceIpTv.text.equals("0.0.0.0")) {
+        // check is connected to wifi or wifi hotspot opened
+        if (InternetInfo.isWifiHotspotOn(requireContext())) {
+            binding.deviceIpTv.text = InternetInfo.getPhoneIp(requireContext())
+            binding.wifiNameLL.visibility = View.GONE
+            binding.hotspotTV.visibility = View.VISIBLE
+        }
+        else if (InternetInfo.isWifiOn(requireContext())) {
+            binding.deviceIpTv.text = InternetInfo.getPhoneIp(requireContext())
+            binding.wifiNameTv.text = InternetInfo.getWifiSSID(requireContext())
+        }
+        else {
             val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
             builder.setCancelable(false)
             builder.setTitle(R.string.wifi_not_connected_dialog_title)
@@ -212,7 +220,7 @@ class HomeFragment : Fragment() {
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty()) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    binding.wifiNameTv.text = InternetInfo.getSSID(requireContext())
+                    binding.wifiNameTv.text = InternetInfo.getWifiSSID(requireContext())
                 } else {
                     val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
                     builder.setCancelable(false)

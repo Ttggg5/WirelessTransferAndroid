@@ -55,6 +55,7 @@ class SearchDeviceDialogFragment: DialogFragment() {
         private set
 
     var searchClient: MyUdp? = null
+    lateinit var broadcastIp: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,6 +70,8 @@ class SearchDeviceDialogFragment: DialogFragment() {
 
         dialog?.window?.setLayout(350.dp, 500.dp)
         dialog?.window?.setBackgroundDrawable(resources.getDrawable(R.drawable.round_block))
+
+        broadcastIp = InternetInfo.getBroadcastIp(requireContext())
 
         binding.cancelBtn.setOnClickListener {
             dialog?.dismiss()
@@ -179,11 +182,11 @@ class SearchDeviceDialogFragment: DialogFragment() {
 
                 // Pc request
                 var rc = RequestCmd(RequestType.PcClientInfo, Settings.Global.getString(context?.contentResolver, "device_name"))
-                searchClient?.send(rc.Encode(), "255.255.255.255")
+                searchClient?.send(rc.Encode(), broadcastIp)
 
                 // Phone request
                 rc = RequestCmd(RequestType.PhoneClientInfoFileShare, Settings.Global.getString(context?.contentResolver, "device_name"))
-                searchClient?.send(rc.Encode(), "255.255.255.255")
+                searchClient?.send(rc.Encode(), broadcastIp)
 
                 // Waiting
                 for (i in 0 until SEARCH_CYCLE / 100) {
