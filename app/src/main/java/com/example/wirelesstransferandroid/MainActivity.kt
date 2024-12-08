@@ -7,8 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.commit
 import androidx.navigation.findNavController
 import com.example.wirelesstransferandroid.fragments.DisplayScreenFragment
+import com.example.wirelesstransferandroid.fragments.HomeFragment
 
 class MainActivity : AppCompatActivity() {
     lateinit var fragmentContainerView: FragmentContainerView

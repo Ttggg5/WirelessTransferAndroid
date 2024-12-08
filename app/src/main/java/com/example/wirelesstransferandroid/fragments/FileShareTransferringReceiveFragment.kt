@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.transition.TransitionInflater
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.customviews.FileProgressTagView
 import com.example.wirelesstransferandroid.databinding.FragmentFileShareTransferringReceiveBinding
@@ -35,6 +36,13 @@ class FileShareTransferringReceiveFragment : Fragment() {
     lateinit var myTcpClient: MyTcpClient
 
     var fileLeft = 0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val inflater = TransitionInflater.from(requireContext())
+        enterTransition = inflater.inflateTransition(R.transition.slide_in)
+        exitTransition = inflater.inflateTransition(R.transition.slide_out)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

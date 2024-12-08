@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
+import androidx.transition.TransitionInflater
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.databinding.FragmentFileShareReceiveBinding
 import com.example.wirelesstransferandroid.internetsocket.Indexes
@@ -27,6 +28,13 @@ class FileShareReceiveFragment : Fragment() {
 
     private lateinit var binding: FragmentFileShareReceiveBinding
     private lateinit var myUdpListener: MyUdp
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val inflater = TransitionInflater.from(requireContext())
+        enterTransition = inflater.inflateTransition(R.transition.slide_in)
+        exitTransition = inflater.inflateTransition(R.transition.slide_out)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

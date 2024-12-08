@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams
 import android.widget.Toast
@@ -17,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.navigation.findNavController
+import androidx.transition.TransitionInflater
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.customviews.FileTagView
 import com.example.wirelesstransferandroid.databinding.FragmentFileShareSendBinding
@@ -45,6 +47,13 @@ class FileShareSendFragment : Fragment() {
             }
         }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val inflater = TransitionInflater.from(requireContext())
+        enterTransition = inflater.inflateTransition(R.transition.slide_in)
+        exitTransition = inflater.inflateTransition(R.transition.slide_out)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -61,7 +70,6 @@ class FileShareSendFragment : Fragment() {
         binding.topAppBar.setNavigationOnClickListener {
             requireActivity().findNavController(R.id.fragmentContainerView).popBackStack()
         }
-
     }
 
     private fun openSpecificFolder(folderName: String) {
@@ -91,9 +99,8 @@ class FileShareSendFragment : Fragment() {
                             val tmp = view as FileTagView
                             if (tmp.uri?.path == uri.path)
                                 return@runOnUiThread
-                            else if (tmp.originalFileName == name) {
+                            else if (tmp.originalFileName == name)
                                 name = GetNonDuplicateFileName(name)
-                            }
                         }
 
                         val ftv = FileTagView(binding.mainLL.context)
@@ -106,7 +113,13 @@ class FileShareSendFragment : Fragment() {
                         ftv.layoutParams = layoutParams
 
                         ftv.setOnDelete {
-                            binding.mainLL.removeView(it)
+                            it.startAnimation(AnimationUtils.loadAnimation(it.context, R.anim.file_tag_delete))
+                            Thread {
+                                Thread.sleep(450)
+                                requireActivity().runOnUiThread {
+                                    binding.mainLL.removeView(it)
+                                }
+                            }.start()
                         }
 
                         binding.mainLL.addView(ftv)

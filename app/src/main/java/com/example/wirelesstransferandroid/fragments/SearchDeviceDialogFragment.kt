@@ -6,6 +6,7 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams
 import android.widget.Toast
@@ -77,11 +78,14 @@ class SearchDeviceDialogFragment: DialogFragment() {
             dialog?.dismiss()
         }
 
-        binding.qrBtn.setOnClickListener {
-            if (binding.qrMask.visibility == View.VISIBLE)
-                binding.qrMask.visibility = View.GONE
-            else
-                binding.qrMask.visibility = View.VISIBLE
+        binding.qrShowBtn.setOnClickListener {
+            binding.qrMask.startAnimation(AnimationUtils.loadAnimation(binding.qrMask.context, R.anim.qr_fade_in))
+            binding.qrMask.visibility = View.VISIBLE
+        }
+
+        binding.qrCloseBtn.setOnClickListener {
+            binding.qrMask.startAnimation(AnimationUtils.loadAnimation(binding.qrMask.context, R.anim.qr_fade_out))
+            binding.qrMask.visibility = View.GONE
         }
 
         binding.qrIV.setImageBitmap(generateQRCode("FileShare " + InternetInfo.getPhoneIp(requireContext())))

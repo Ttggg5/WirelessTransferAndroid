@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.transition.TransitionInflater
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.databinding.FragmentDisplayScreenBinding
 import com.example.wirelesstransferandroid.internetsocket.MyTcp.MyTcpClient
@@ -64,6 +65,13 @@ class DisplayScreenFragment : Fragment() {
 
     var movementX = 0f
     var movementY = 0f
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val inflater = TransitionInflater.from(requireContext())
+        enterTransition = inflater.inflateTransition(R.transition.slide_in)
+        exitTransition = inflater.inflateTransition(R.transition.slide_out)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

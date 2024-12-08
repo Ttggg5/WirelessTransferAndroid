@@ -1,19 +1,28 @@
 package com.example.wirelesstransferandroid.customviews
 
+import android.animation.AnimatorInflater
+import android.animation.AnimatorSet
 import android.content.Context
 import android.content.res.TypedArray
 import android.net.Uri
 import android.util.AttributeSet
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.tools.FileInfoPresenter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class FileTagView: ConstraintLayout {
     companion object {
-        const val MAX_LENGTH = 24
+        const val MAX_LENGTH = 20
     }
 
     private var onDelete: (FileTagView) -> Unit = {}
