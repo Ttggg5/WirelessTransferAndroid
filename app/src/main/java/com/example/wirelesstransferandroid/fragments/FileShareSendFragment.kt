@@ -22,12 +22,16 @@ import androidx.transition.TransitionInflater
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.customviews.FileTagView
 import com.example.wirelesstransferandroid.databinding.FragmentFileShareSendBinding
+import com.example.wirelesstransferandroid.tools.FileInfoPresenter
 import com.example.wirelesstransferandroid.tools.IntToDp.dp
 import java.util.ArrayList
 
 class FileShareSendFragment : Fragment() {
 
     lateinit var binding: FragmentFileShareSendBinding
+
+    var choseFileCount = 0
+    var fileTotalSize = 0L
 
     private val requestFileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -118,11 +122,17 @@ class FileShareSendFragment : Fragment() {
                                 Thread.sleep(450)
                                 requireActivity().runOnUiThread {
                                     binding.mainLL.removeView(it)
+                                    binding.fileChoseCountTV.text = String.format("%d", --choseFileCount)
+                                    fileTotalSize -= it.fullFileSize
+                                    binding.fileTotalSizeTV.text = FileInfoPresenter.getFileSizePresent(fileTotalSize)
                                 }
                             }.start()
                         }
 
                         binding.mainLL.addView(ftv)
+                        binding.fileChoseCountTV.text = String.format("%d", ++choseFileCount)
+                        fileTotalSize += ftv.fullFileSize
+                        binding.fileTotalSizeTV.text = FileInfoPresenter.getFileSizePresent(fileTotalSize)
                     }
                 }
             }

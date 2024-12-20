@@ -114,10 +114,9 @@ class FileShareTransferringReceiveFragment : Fragment() {
                                 fileLeft--
                                 if (fileLeft == 0) {
                                     binding.returnHomeBtn.visibility = View.VISIBLE
+                                    NotificationSender.sendNotification(requireContext(), "FileShare", resources.getString(R.string.download_complete), NotificationSender.fileShareChannel)
                                 }
                                 binding.fileLeftTV.text = fileLeft.toString()
-
-                                NotificationSender.sendNotification(requireContext(), "FileShare", resources.getString(R.string.download_complete), NotificationSender.fileShareChannel)
                             }
                         }
 

@@ -23,6 +23,7 @@ import com.example.wirelesstransferandroid.customviews.FileProgressTagView
 import com.example.wirelesstransferandroid.databinding.FragmentFileShareTransferringSendBinding
 import com.example.wirelesstransferandroid.internetsocket.MyTcp.MyTcpClientInfo
 import com.example.wirelesstransferandroid.internetsocket.MyTcp.MyTcpServer
+import com.example.wirelesstransferandroid.internetsocket.MyTcp.MyTcpServerState
 import com.example.wirelesstransferandroid.internetsocket.cmd.Cmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.CmdType
 import com.example.wirelesstransferandroid.internetsocket.cmd.FileDataCmd
@@ -182,6 +183,8 @@ class FileShareTransferringSendFragment : Fragment() {
                                             val actualLength = fileStream?.read(buffer) ?: 0
                                             if (actualLength < 0) break
 
+                                            if (server.state != MyTcpServerState.Listening)
+                                                break
                                             server.sendCmd(FileDataCmd(name, buffer.sliceArray(0 until actualLength)), clientInfo)
 
                                             requireActivity().runOnUiThread {
@@ -197,6 +200,10 @@ class FileShareTransferringSendFragment : Fragment() {
                     }
                 }
             }
+        }
+        else if (cmd.cmdType == CmdType.Request) {
+            if ((cmd as RequestCmd).requestType == RequestType.Disconnect)
+                server.stop()
         }
     }
 

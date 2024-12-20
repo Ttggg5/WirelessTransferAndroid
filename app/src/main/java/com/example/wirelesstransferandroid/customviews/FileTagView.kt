@@ -96,6 +96,7 @@ class FileTagView: ConstraintLayout {
 
         deleteBtn = findViewById<Button>(R.id.deleteBtn)
         deleteBtn.setOnClickListener {
+            deleteBtn.isEnabled = false
             onDelete.invoke(this)
         }
     }

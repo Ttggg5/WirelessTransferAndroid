@@ -46,6 +46,8 @@
     <string name="download_complete">你的檔案都已下載完成</string>
     <string name="send_complete">你的檔案都已傳送完成</string>
     <string name="using_wifi_hotspot">WIFI熱點使用中</string>
+    <string name="chose_file_count">已選擇檔案:</string>
+    <string name="total">總計:</string>
 
     <!-- dialogs -->
     <string name="confirm">確認</string>
