@@ -184,4 +184,16 @@ class FileProgressTagView: ConstraintLayout {
             updateProgress(data.size.toLong())
         }
     }
+
+    fun deleteWroteFile() {
+        CoroutineScope(Dispatchers.Main).launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    fileSave.delete()
+                } catch (ex: Exception) {
+
+                }
+            }
+        }
+    }
 }

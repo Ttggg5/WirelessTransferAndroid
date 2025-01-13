@@ -15,6 +15,7 @@ import androidx.navigation.findNavController
 import androidx.transition.TransitionInflater
 import com.example.wirelesstransferandroid.R
 import com.example.wirelesstransferandroid.customviews.FileProgressTagView
+import com.example.wirelesstransferandroid.customviews.FileShareTagState
 import com.example.wirelesstransferandroid.databinding.FragmentFileShareTransferringReceiveBinding
 import com.example.wirelesstransferandroid.internetsocket.MyTcp.MyTcpClient
 import com.example.wirelesstransferandroid.internetsocket.MyTcp.MyTcpClientState
@@ -35,6 +36,7 @@ class FileShareTransferringReceiveFragment : Fragment() {
 
     lateinit var myTcpClient: MyTcpClient
 
+    var totalFile = 0
     var fileLeft = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +68,8 @@ class FileShareTransferringReceiveFragment : Fragment() {
 
             if (fileLeft == 0)
                 requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_fileShareTransferringReceiveFragment_to_homeFragment)
+
+            NotificationSender.dismissNotification(requireContext(), NotificationSender.fileShareChannel)
         }
 
         binding.returnHomeBtn.setOnClickListener {
@@ -90,6 +94,7 @@ class FileShareTransferringReceiveFragment : Fragment() {
 
             requireActivity().runOnUiThread {
                 requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_fileShareTransferringReceiveFragment_to_homeFragment)
+                NotificationSender.dismissNotification(requireContext(), NotificationSender.fileShareChannel)
 
                 val toast = Toast(requireContext())
                 toast.setText(R.string.disconnected_from_pc)
@@ -122,6 +127,7 @@ class FileShareTransferringReceiveFragment : Fragment() {
 
                         binding.mainLL.addView(fptv)
 
+                        totalFile++
                         binding.fileLeftTV.text = (++fileLeft).toString()
                     }
                 }
@@ -132,6 +138,9 @@ class FileShareTransferringReceiveFragment : Fragment() {
                             val fptv = view as FileProgressTagView
                             if (fptv.originalFileName == fdc.fileName) {
                                 fptv.writeDataToFile(fdc.fileData)
+                                NotificationSender.sendProgressNotification(requireContext(), "FileShare",
+                                    String.format("%s(%d/%d)", resources.getString(R.string.downloading), totalFile - fileLeft + 1, totalFile),
+                                    fptv.progressBar.progress, NotificationSender.fileShareChannel)
                                 break
                             }
                         }
@@ -166,6 +175,12 @@ class FileShareTransferringReceiveFragment : Fragment() {
             } catch (ex: Exception) {
 
             }
+        }
+
+        for (view in binding.mainLL.children) {
+            val fptv = view as FileProgressTagView
+            if (fptv.state == FileShareTagState.Processing)
+                fptv.deleteWroteFile()
         }
     }
 }
