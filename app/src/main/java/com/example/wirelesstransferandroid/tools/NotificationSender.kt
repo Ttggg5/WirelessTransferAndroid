@@ -31,7 +31,7 @@ object NotificationSender {
         manager.notify(notifyId, builder.build())
     }
 
-    fun sendProgressNotification(context: Context, title: String, content: String, progress: Int, channel: NotificationChannel) {
+    fun sendProgressNotification(context: Context, title: String, content: String, progress: Int, indeterminate: Boolean, channel: NotificationChannel) {
         var notifyId = getNotifyId(channel)
 
         val builder = Notification.Builder(context, channel.id)
@@ -39,7 +39,7 @@ object NotificationSender {
             .setSmallIcon(smallIcon)
             .setContentTitle(title)
             .setContentText(content)
-            .setProgress(100, progress, false)
+            .setProgress(100, progress, indeterminate)
         val manager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         manager.createNotificationChannel(channel)
         manager.notify(notifyId, builder.build())

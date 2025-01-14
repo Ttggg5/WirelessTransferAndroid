@@ -166,7 +166,7 @@ class FileProgressTagView: ConstraintLayout {
         }
 
         curFileSize += size
-        progressBar.setProgress(((curFileSize.toFloat() / fullFileSize.toFloat()) * 100.0).toInt(), true)
+        progressBar.setProgress(((curFileSize.toDouble() / fullFileSize.toDouble()) * 100.0).toInt(), true)
 
         if (curFileSize == fullFileSize) {
             state = FileShareTagState.Complete

@@ -35,6 +35,7 @@ class FileShareTransferringReceiveFragment : Fragment() {
     private lateinit var binding: FragmentFileShareTransferringReceiveBinding
 
     lateinit var myTcpClient: MyTcpClient
+    val fileProgressTags = ArrayList<FileProgressTagView>()
 
     var totalFile = 0
     var fileLeft = 0
@@ -92,9 +93,9 @@ class FileShareTransferringReceiveFragment : Fragment() {
         myTcpClient?.setOnDisconnected {
             if (fileLeft == 0) return@setOnDisconnected
 
+            NotificationSender.dismissNotification(requireContext(), NotificationSender.fileShareChannel)
             requireActivity().runOnUiThread {
                 requireActivity().findNavController(R.id.fragmentContainerView).navigate(R.id.action_fileShareTransferringReceiveFragment_to_homeFragment)
-                NotificationSender.dismissNotification(requireContext(), NotificationSender.fileShareChannel)
 
                 val toast = Toast(requireContext())
                 toast.setText(R.string.disconnected_from_pc)
@@ -115,16 +116,19 @@ class FileShareTransferringReceiveFragment : Fragment() {
                         fptv.layoutParams = layoutParams
 
                         fptv.setOnCompleted {
-                            requireActivity().runOnUiThread {
-                                fileLeft--
-                                if (fileLeft == 0) {
+                            fileLeft--
+                            if (fileLeft == 0) {
+                                NotificationSender.sendNotification(requireContext(), "FileShare", resources.getString(R.string.download_complete), NotificationSender.fileShareChannel)
+                                requireActivity().runOnUiThread {
                                     binding.returnHomeBtn.visibility = View.VISIBLE
-                                    NotificationSender.sendNotification(requireContext(), "FileShare", resources.getString(R.string.download_complete), NotificationSender.fileShareChannel)
                                 }
+                            }
+                            requireActivity().runOnUiThread {
                                 binding.fileLeftTV.text = fileLeft.toString()
                             }
                         }
 
+                        fileProgressTags.add(fptv)
                         binding.mainLL.addView(fptv)
 
                         totalFile++
@@ -133,16 +137,10 @@ class FileShareTransferringReceiveFragment : Fragment() {
                 }
                 CmdType.FileData -> {
                     val fdc = cmd as FileDataCmd
-                    requireActivity().runOnUiThread {
-                        for (view in binding.mainLL.children) {
-                            val fptv = view as FileProgressTagView
-                            if (fptv.originalFileName == fdc.fileName) {
-                                fptv.writeDataToFile(fdc.fileData)
-                                NotificationSender.sendProgressNotification(requireContext(), "FileShare",
-                                    String.format("%s(%d/%d)", resources.getString(R.string.downloading), totalFile - fileLeft + 1, totalFile),
-                                    fptv.progressBar.progress, NotificationSender.fileShareChannel)
-                                break
-                            }
+                    for (tag in fileProgressTags) {
+                        if (tag.originalFileName == fdc.fileName) {
+                            tag.writeDataToFile(fdc.fileData)
+                            break
                         }
                     }
                 }
@@ -153,6 +151,20 @@ class FileShareTransferringReceiveFragment : Fragment() {
                             lifecycleScope.launch {
                                 myTcpClient.sendCmd(ReplyCmd(ReplyType.Accept))
                             }
+
+                            // send progress notification
+                            Thread {
+                                while (fileLeft == 0) {}
+
+                                while (fileLeft > 0) {
+                                    val tag = fileProgressTags[totalFile - fileLeft]
+                                    val percentage = ((tag.curFileSize.toDouble() / tag.fullFileSize.toDouble()) * 100.0).toInt()
+                                    NotificationSender.sendProgressNotification(requireContext(), "FileShare",
+                                        String.format("%s(%d/%d)", resources.getString(R.string.downloading), totalFile - fileLeft + 1, totalFile),
+                                        percentage, false, NotificationSender.fileShareChannel)
+                                    Thread.sleep(500)
+                                }
+                            }.start()
                         }
                         RequestType.Disconnect -> {
                             myTcpClient?.disconnect()
