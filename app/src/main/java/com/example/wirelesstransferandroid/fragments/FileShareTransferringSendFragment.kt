@@ -44,6 +44,7 @@ class FileShareTransferringSendFragment : Fragment() {
     lateinit var server: MyTcpServer
 
     lateinit var fileUriList: ArrayList<Uri>
+    val fileProgressTags = ArrayList<FileProgressTagView>()
 
     var fileLeft = 0
 
@@ -122,6 +123,7 @@ class FileShareTransferringSendFragment : Fragment() {
                         }
                     }
 
+                    fileProgressTags.add(fptv)
                     binding.mainLL.addView(fptv)
 
                     binding.fileLeftTV.text = (++fileLeft).toString()
@@ -199,6 +201,20 @@ class FileShareTransferringSendFragment : Fragment() {
                         }
                     }
                 }
+
+                // send progress notification
+                Thread {
+                    while (fileLeft == 0) {}
+
+                    while (fileLeft > 0) {
+                        val tag = fileProgressTags[fileProgressTags.size - fileLeft]
+                        val percentage = ((tag.curFileSize.toDouble() / tag.fullFileSize.toDouble()) * 100.0).toInt()
+                        NotificationSender.sendProgressNotification(requireContext(), "FileShare",
+                            String.format("%s(%d/%d)", resources.getString(R.string.downloading), fileProgressTags.size - fileLeft + 1, fileProgressTags.size),
+                            percentage, false, NotificationSender.fileShareChannel)
+                        Thread.sleep(500)
+                    }
+                }.start()
             }
         }
         else if (cmd.cmdType == CmdType.Request) {
