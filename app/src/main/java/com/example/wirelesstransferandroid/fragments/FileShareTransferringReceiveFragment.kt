@@ -140,6 +140,9 @@ class FileShareTransferringReceiveFragment : Fragment() {
                     for (tag in fileProgressTags) {
                         if (tag.originalFileName == fdc.fileName) {
                             tag.writeDataToFile(fdc.fileData)
+                            lifecycleScope.launch {
+                                myTcpClient.sendCmd(RequestCmd(RequestType.FileShare, Settings.Global.getString(requireContext().contentResolver, "device_name")))
+                            }
                             break
                         }
                     }
@@ -160,9 +163,8 @@ class FileShareTransferringReceiveFragment : Fragment() {
                                     val tag = fileProgressTags[totalFile - fileLeft]
                                     val percentage = ((tag.curFileSize.toDouble() / tag.fullFileSize.toDouble()) * 100.0).toInt()
                                     NotificationSender.sendProgressNotification(requireContext(), "FileShare",
-                                        String.format("%s(%d/%d)", resources.getString(R.string.downloading), totalFile - fileLeft + 1, totalFile),
-                                        percentage, false, NotificationSender.fileShareChannel)
-                                    Thread.sleep(500)
+                                        String.format("%s(%d/%d)", resources.getString(R.string.downloading), totalFile - fileLeft + 1, totalFile), percentage, false)
+                                    Thread.sleep(1000)
                                 }
                             }.start()
                         }

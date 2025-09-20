@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         try {
             val fragment = findNavController(R.id.fragmentContainerView).currentDestination
             if(fragment?.id == R.id.displayScreenFragment){
-                val dsf = supportFragmentManager.findFragmentById(fragmentContainerView.id)?.childFragmentManager?.fragments[0] as DisplayScreenFragment
+                val dsf = supportFragmentManager.findFragmentById(fragmentContainerView.id)?.childFragmentManager?.fragments?.get(0) as DisplayScreenFragment
                 return dsf.onKeyUp(keyCode, event)
             }
             else if (fragment?.id == R.id.fileShareTransferringReceiveFragment) return true

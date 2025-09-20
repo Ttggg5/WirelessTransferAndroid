@@ -1,13 +1,10 @@
 package com.example.wirelesstransferandroid.fragments
 
-import android.app.Notification
-import android.app.NotificationManager
-import android.content.Context.NOTIFICATION_SERVICE
+import android.R.bool
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.provider.Settings
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams
 import android.widget.Toast
 import androidx.core.view.children
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.transition.TransitionInflater
@@ -32,10 +30,11 @@ import com.example.wirelesstransferandroid.internetsocket.cmd.ReplyCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.ReplyType
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestCmd
 import com.example.wirelesstransferandroid.internetsocket.cmd.RequestType
-import com.example.wirelesstransferandroid.tools.NotificationSender
 import com.example.wirelesstransferandroid.tools.InternetInfo
+import com.example.wirelesstransferandroid.tools.NotificationSender
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 class FileShareTransferringSendFragment : Fragment() {
 
@@ -47,6 +46,7 @@ class FileShareTransferringSendFragment : Fragment() {
     val fileProgressTags = ArrayList<FileProgressTagView>()
 
     var fileLeft = 0
+    var nextSeg: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -192,6 +192,8 @@ class FileShareTransferringSendFragment : Fragment() {
                                             requireActivity().runOnUiThread {
                                                 fileProgressTagView?.updateProgress(actualLength.toLong())
                                             }
+
+                                            while (!nextSeg) { }
                                         }
                                     } catch (ex: Exception) {
                                         ex.stackTrace
@@ -210,15 +212,16 @@ class FileShareTransferringSendFragment : Fragment() {
                         val tag = fileProgressTags[fileProgressTags.size - fileLeft]
                         val percentage = ((tag.curFileSize.toDouble() / tag.fullFileSize.toDouble()) * 100.0).toInt()
                         NotificationSender.sendProgressNotification(requireContext(), "FileShare",
-                            String.format("%s(%d/%d)", resources.getString(R.string.downloading), fileProgressTags.size - fileLeft + 1, fileProgressTags.size),
-                            percentage, false, NotificationSender.fileShareChannel)
+                            String.format("%s(%d/%d)", resources.getString(R.string.downloading), fileProgressTags.size - fileLeft + 1, fileProgressTags.size), percentage, false)
                         Thread.sleep(500)
                     }
                 }.start()
             }
         }
         else if (cmd.cmdType == CmdType.Request) {
-            if ((cmd as RequestCmd).requestType == RequestType.Disconnect)
+            if ((cmd as RequestCmd).requestType == RequestType.FileShare)
+                nextSeg = true
+            else if ((cmd as RequestCmd).requestType == RequestType.Disconnect)
                 server.stop()
         }
     }

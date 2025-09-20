@@ -9,11 +9,13 @@ import com.example.wirelesstransferandroid.R
 
 object NotificationSender {
     val fileShareChannel = NotificationChannel("FileShare", "FileShare", NotificationManager.IMPORTANCE_HIGH)
+    val fileProgressChannel = NotificationChannel("FileProgress", "FileProgress", NotificationManager.IMPORTANCE_MIN)
     var smallIcon = R.mipmap.ic_launcher_round
 
     fun getNotifyId(channel: NotificationChannel): Int {
         when (channel.id) {
             "FileShare" -> return 1
+            "FileProgress" -> return 2
         }
         return 0
     }
@@ -31,17 +33,17 @@ object NotificationSender {
         manager.notify(notifyId, builder.build())
     }
 
-    fun sendProgressNotification(context: Context, title: String, content: String, progress: Int, indeterminate: Boolean, channel: NotificationChannel) {
-        var notifyId = getNotifyId(channel)
+    fun sendProgressNotification(context: Context, title: String, content: String, progress: Int, indeterminate: Boolean) {
+        var notifyId = getNotifyId(fileProgressChannel)
 
-        val builder = Notification.Builder(context, channel.id)
+        val builder = Notification.Builder(context, fileProgressChannel.id)
         builder
             .setSmallIcon(smallIcon)
             .setContentTitle(title)
             .setContentText(content)
             .setProgress(100, progress, indeterminate)
         val manager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        manager.createNotificationChannel(channel)
+        manager.createNotificationChannel(fileProgressChannel)
         manager.notify(notifyId, builder.build())
     }
 
