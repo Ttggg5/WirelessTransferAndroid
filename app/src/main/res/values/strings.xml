@@ -45,6 +45,7 @@
     <string name="request_timeout">請求超時!</string>
     <string name="download_complete">你的檔案都已下載完成</string>
     <string name="downloading">檔案下載中</string>
+    <string name="sending">檔案傳送中</string>
     <string name="send_complete">你的檔案都已傳送完成</string>
     <string name="using_wifi_hotspot">WIFI熱點使用中</string>
     <string name="chose_file_count">已選擇檔案:</string>

@@ -74,7 +74,7 @@ class FileShareTransferringSendFragment : Fragment() {
         }
 
         binding.cancelBtn.setOnClickListener {
-            requireActivity().findNavController(R.id.fragmentContainerView).popBackStack()
+            server.stop()
         }
 
         binding.returnHomeBtn.setOnClickListener {
@@ -159,62 +159,65 @@ class FileShareTransferringSendFragment : Fragment() {
         if (cmd.cmdType == CmdType.Reply) {
             if ((cmd as ReplyCmd).replyType == ReplyType.Accept) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    for (uri in fileUriList) {
-                        val buffer = ByteArray(4194304) // 4MB
+                    try {
+                        for (uri in fileUriList) {
+                            val buffer = ByteArray(4194304) // 4MB
 
-                        val cursor = requireActivity().contentResolver.query(uri, null, null, null, null)
-                        cursor?.use {
-                            if (it.moveToFirst()) {
-                                val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                                if (nameIndex >= 0) {
-                                    var name = it.getString(nameIndex)
+                            val cursor = requireActivity().contentResolver.query(uri, null, null, null, null)
+                            cursor?.use {
+                                if (it.moveToFirst()) {
+                                    val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                                    if (nameIndex >= 0) {
+                                        var name = it.getString(nameIndex)
 
-                                    var fileProgressTagView: FileProgressTagView? = null
-                                    requireActivity().runOnUiThread {
-                                        for (v in binding.mainLL.children) {
-                                            if ((v as FileProgressTagView).fileUri?.path == uri.path) {
-                                                fileProgressTagView = v
-                                                break
+                                        var fileProgressTagView: FileProgressTagView? = null
+                                        requireActivity().runOnUiThread {
+                                            for (v in binding.mainLL.children) {
+                                                if ((v as FileProgressTagView).fileUri?.path == uri.path) {
+                                                    fileProgressTagView = v
+                                                    break
+                                                }
                                             }
                                         }
-                                    }
 
-                                    try {
-                                        val fileStream = requireContext().contentResolver.openInputStream(uri)
-                                        while (true) {
-                                            val actualLength = fileStream?.read(buffer) ?: 0
-                                            if (actualLength < 0) break
+                                        try {
+                                            val fileStream = requireContext().contentResolver.openInputStream(uri)
+                                            while (true) {
+                                                val actualLength = fileStream?.read(buffer) ?: 0
+                                                if (actualLength < 0) break
 
-                                            if (server.state != MyTcpServerState.Listening)
-                                                break
-                                            server.sendCmd(FileDataCmd(name, buffer.sliceArray(0 until actualLength)), clientInfo)
+                                                if (server.state != MyTcpServerState.Listening)
+                                                    break
+                                                server.sendCmd(FileDataCmd(name, buffer.sliceArray(0 until actualLength)), clientInfo)
 
-                                            requireActivity().runOnUiThread {
-                                                fileProgressTagView?.updateProgress(actualLength.toLong())
+                                                requireActivity().runOnUiThread {
+                                                    fileProgressTagView?.updateProgress(actualLength.toLong())
+                                                }
+
+                                                while (!nextSeg) { }
                                             }
-
-                                            while (!nextSeg) { }
-                                        }
-                                    } catch (ex: Exception) {
-                                        ex.stackTrace
+                                        } catch (_: Exception) { }
                                     }
                                 }
                             }
                         }
-                    }
+                    } catch (_: Exception) { }
                 }
 
                 // send progress notification
                 Thread {
-                    while (fileLeft == 0) {}
+                    try {
+                        while (fileLeft > 0) {
+                            val tag = fileProgressTags[fileProgressTags.size - fileLeft]
+                            val percentage = ((tag.curFileSize.toDouble() / tag.fullFileSize.toDouble()) * 100.0).toInt()
+                            NotificationSender.sendProgressNotification(requireContext(), "FileShare",
+                                String.format("%s(%d/%d)", resources.getString(R.string.sending), fileProgressTags.size - fileLeft + 1, fileProgressTags.size), percentage, false)
+                            Thread.sleep(500)
+                        }
 
-                    while (fileLeft > 0) {
-                        val tag = fileProgressTags[fileProgressTags.size - fileLeft]
-                        val percentage = ((tag.curFileSize.toDouble() / tag.fullFileSize.toDouble()) * 100.0).toInt()
                         NotificationSender.sendProgressNotification(requireContext(), "FileShare",
-                            String.format("%s(%d/%d)", resources.getString(R.string.downloading), fileProgressTags.size - fileLeft + 1, fileProgressTags.size), percentage, false)
-                        Thread.sleep(500)
-                    }
+                            String.format("%s(%d/%d)", resources.getString(R.string.sending), fileProgressTags.size, fileProgressTags.size), 100, false)
+                    } catch (_: Exception) { }
                 }.start()
             }
         }

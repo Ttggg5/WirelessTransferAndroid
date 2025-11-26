@@ -139,10 +139,10 @@ class FileShareTransferringReceiveFragment : Fragment() {
                     val fdc = cmd as FileDataCmd
                     for (tag in fileProgressTags) {
                         if (tag.originalFileName == fdc.fileName) {
-                            tag.writeDataToFile(fdc.fileData)
                             lifecycleScope.launch {
                                 myTcpClient.sendCmd(RequestCmd(RequestType.FileShare, Settings.Global.getString(requireContext().contentResolver, "device_name")))
                             }
+                            tag.writeDataToFile(fdc.fileData)
                             break
                         }
                     }
@@ -166,6 +166,9 @@ class FileShareTransferringReceiveFragment : Fragment() {
                                         String.format("%s(%d/%d)", resources.getString(R.string.downloading), totalFile - fileLeft + 1, totalFile), percentage, false)
                                     Thread.sleep(1000)
                                 }
+
+                                NotificationSender.sendProgressNotification(requireContext(), "FileShare",
+                                    String.format("%s(%d/%d)", resources.getString(R.string.downloading), totalFile, totalFile), 100, false)
                             }.start()
                         }
                         RequestType.Disconnect -> {

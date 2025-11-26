@@ -38,7 +38,7 @@ class MyTcpServer(val serverIp: String, val serverName: String, val port: Int) {
     var state: MyTcpServerState = MyTcpServerState.Closed
         private set
 
-    lateinit var server: ServerSocket
+    var server: ServerSocket? = null
         private set
 
     var connectedClientList = ArrayList<MyTcpClientInfo>()
@@ -52,9 +52,9 @@ class MyTcpServer(val serverIp: String, val serverName: String, val port: Int) {
         state = MyTcpServerState.Listening
         Thread {
             try {
-                server = ServerSocket(port, maxClient) // maxClient: 0 means no limit
+                server = ServerSocket(port)
                 while (state == MyTcpServerState.Listening) {
-                    val client = server.accept()
+                    val client = server!!.accept()
                     try {
                         val tmpBuffer = ByteArray(1024) // this is only for ClientInfoCmd
                         val actualLength = client.getInputStream().read(tmpBuffer)
@@ -69,17 +69,17 @@ class MyTcpServer(val serverIp: String, val serverName: String, val port: Int) {
                                 Thread { clientReader(mtci) }.start()
                             }
                         }
-                    } catch (ex: Exception) {
-
-                    }
+                    } catch (_: Exception) { }
 
                     while (connectedClientList.count() >= maxClient){
                         Thread.sleep(1000)
                     }
                 }
             } catch (ex: Exception) {
-                state = MyTcpServerState.Closed
-                server.close()
+                if (state == MyTcpServerState.Listening) {
+                    state = MyTcpServerState.Closed
+                    server?.close()
+                }
             }
         }.start()
     }
@@ -135,6 +135,7 @@ class MyTcpServer(val serverIp: String, val serverName: String, val port: Int) {
             onClientDisconnected.invoke(clientInfo)
         }
 
-        server.close()
+        server?.close()
+        server = null
     }
 }
